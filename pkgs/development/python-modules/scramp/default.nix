@@ -2,14 +2,18 @@
 , asn1crypto
 , buildPythonPackage
 , fetchFromGitHub
+, setuptools
+, passlib
 , pytest-mock
 , pytestCheckHook
 , pythonOlder
+, versioningit
 }:
 
 buildPythonPackage rec {
   pname = "scramp";
-  version = "1.4.1";
+  version = "1.4.3";
+  format = "pyproject";
 
   disabled = pythonOlder "3.6";
 
@@ -17,17 +21,26 @@ buildPythonPackage rec {
     owner = "tlocke";
     repo = "scramp";
     rev = version;
-    sha256 = "sha256-HEt2QxNHX9Oqx+o0++ZtS61SVHra3nLAqv7NbQWVV+E=";
+    sha256 = "sha256-BKZam2zLS/SK6rqiUkoeFpQ0bO4pU8CKVNhOM1fv10Y=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     asn1crypto
   ];
 
   checkInputs = [
+    passlib
     pytest-mock
     pytestCheckHook
   ];
+
+  postPatch = ''
+    substituteInPlace pyproject.toml --replace 'dynamic = ["version"]' 'version = "${version}"'
+  '';
 
   pythonImportsCheck = [ "scramp" ];
 
