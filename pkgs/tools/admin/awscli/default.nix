@@ -9,6 +9,8 @@ let
     packageOverrides = self: super: {
       # TODO: https://github.com/aws/aws-cli/pull/5712
       colorama = super.colorama.overridePythonAttrs (oldAttrs: rec {
+        format = "setuptools";
+        nativeBuildInputs = [];
         version = "0.4.3";
         src = oldAttrs.src.override {
           inherit version;
@@ -35,11 +37,11 @@ let
 in
 with py.pkgs; buildPythonApplication rec {
   pname = "awscli";
-  version = "1.25.76"; # N.B: if you change this, change botocore and boto3 to a matching version too
+  version = "1.26.3"; # N.B: if you change this, change botocore and boto3 to a matching version too
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-PSr0zZEGXFxcFSN7QQ5Ux0Z4aCwwm9na+2hIv/gR6+s=";
+    hash = "sha256-ydTjQwR8UajgjBZgKKNinyqE8HYLoz2u/ScLnv29a0w=";
   };
 
   # https://github.com/aws/aws-cli/issues/4837
