@@ -1135,10 +1135,10 @@ rec {
         type = toType;
       });
       config = mkMerge [
-        {
-          warnings = optional (warn && fromOpt.isDefined)
+        (optionalAttrs warn {
+          warnings = optional fromOpt.isDefined
             "The option `${showOption from}' defined in ${showFiles fromOpt.files} has been renamed to `${showOption to}'.";
-        }
+        })
         (if withPriority
           then mkAliasAndWrapDefsWithPriority (setAttrByPath to) fromOpt
           else mkAliasAndWrapDefinitions (setAttrByPath to) fromOpt)
