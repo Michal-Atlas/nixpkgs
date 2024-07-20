@@ -1,0 +1,12 @@
+diff --git a/src/de.hummdudel.Libellus.in b/src/de.hummdudel.Libellus.in
+index 5c71c3c..2e6ecf7 100755
+--- a/src/de.hummdudel.Libellus.in
++++ b/src/de.hummdudel.Libellus.in
+@@ -2,6 +2,7 @@
+ 
+ import { exit, programArgs, programInvocationName } from "system";
+ 
++imports.package._findEffectiveEntryPointName = () => 'de.hummdudel.Libellus'
+ imports.package.init({
+   name: "@PACKAGE_NAME@",
+   version: "@PACKAGE_VERSION@",
