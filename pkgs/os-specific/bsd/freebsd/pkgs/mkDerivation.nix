@@ -5,6 +5,7 @@
   stdenvNoLibs,
   overrideCC,
   buildPackages,
+  stdenvNoLibcxx ? overrideCC stdenv buildPackages.llvmPackages.clangNoLibcxx,
   versionData,
   patches,
   compatIfNeeded,
@@ -29,7 +30,7 @@ lib.makeOverridable (
       else if attrs.noLibc or false then
         stdenvNoLibs
       else if attrs.noLibcxx or false then
-        overrideCC stdenv buildPackages.llvmPackages.clangNoLibcxx
+        stdenvNoLibcxx
       else
         stdenv;
   in
@@ -64,9 +65,9 @@ lib.makeOverridable (
       # amd64 not x86_64 for this on unlike NetBSD
       MACHINE_ARCH = freebsd-lib.mkBsdArch stdenv';
 
-      MACHINE = freebsd-lib.mkBsdArch stdenv';
+      MACHINE = freebsd-lib.mkBsdMachine stdenv';
 
-      MACHINE_CPUARCH = MACHINE_ARCH;
+      MACHINE_CPUARCH = freebsd-lib.mkBsdCpuArch stdenv';
 
       COMPONENT_PATH = attrs.path or null;
 
@@ -117,7 +118,9 @@ lib.makeOverridable (
     // {
       patches =
         (lib.optionals (attrs.autoPickPatches or true) (
-          freebsd-lib.filterPatches patches (attrs.extraPaths or [ ] ++ [ attrs.path ])
+          freebsd-lib.filterPatches patches (
+            attrs.extraPaths or [ ] ++ (lib.optional (attrs ? path) attrs.path)
+          )
         ))
         ++ attrs.patches or [ ];
     }
