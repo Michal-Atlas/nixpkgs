@@ -45,14 +45,14 @@ let
 
   pname = "slack";
 
-  x86_64-darwin-version = "4.39.90";
-  x86_64-darwin-sha256 = "0wdvsw0m1jks1n97anzamssicl9jfx9js480q3kl9hd80viz97lq";
+  x86_64-darwin-version = "4.41.98";
+  x86_64-darwin-sha256 = "1bg62139y4y1m4a6fq67d1kn7yjnzaqjffx0v7srf3097k8p304x";
 
-  x86_64-linux-version = "4.39.90";
-  x86_64-linux-sha256 = "00ygbka304xnh99s17hh51lxjdkv2flh6nmn143dkj7qqabgrll8";
+  x86_64-linux-version = "4.41.98";
+  x86_64-linux-sha256 = "0gdnpgp1vc96asx8079ka9fckg7dahrnwk8amwwq36apmssvjz4q";
 
-  aarch64-darwin-version = "4.39.90";
-  aarch64-darwin-sha256 = "0rm0khbf2bqxs2ddlmss7m3sb5yy05lb96kv0a065ifadzcf5zsb";
+  aarch64-darwin-version = "4.41.98";
+  aarch64-darwin-sha256 = "0nlwdzby9hwsx8vp4bsbjidh61zmdgs791xb5mk7xzigjkg33xga";
 
   version = {
     x86_64-darwin = x86_64-darwin-version;
@@ -138,7 +138,7 @@ let
       xorg.libXtst
       xorg.libxkbfile
       xorg.libxshmfence
-    ] + ":${stdenv.cc.cc.lib}/lib64";
+    ] + ":${lib.getLib stdenv.cc.cc}/lib64";
 
     buildInputs = [
       gtk3 # needed for GSETTINGS_SCHEMAS_PATH
@@ -174,7 +174,7 @@ let
       makeWrapper $out/lib/slack/slack $out/bin/slack \
         --prefix XDG_DATA_DIRS : $GSETTINGS_SCHEMAS_PATH \
         --suffix PATH : ${lib.makeBinPath [xdg-utils]} \
-        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer}}"
+        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer --enable-wayland-ime=true}}"
 
       # Fix the desktop link
       substituteInPlace $out/share/applications/slack.desktop \
@@ -207,6 +207,6 @@ let
     '';
   };
 in
-if stdenv.isDarwin
+if stdenv.hostPlatform.isDarwin
 then darwin
 else linux

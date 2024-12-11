@@ -24,18 +24,19 @@ let
       setuptools
       sexpdata
       six
+      watchdog
     ]
   );
 in
 melpaBuild {
   pname = "lsp-bridge";
-  version = "0-unstable-2024-07-27";
+  version = "0-unstable-2024-12-09";
 
   src = fetchFromGitHub {
     owner = "manateelazycat";
     repo = "lsp-bridge";
-    rev = "92d58ff0fb938ced513d690e0daadef74737e5d4";
-    hash = "sha256-qeoKPwK3qKcvUFchaQYCCQmSlXgN+Tt2kU+lXqiUwaw=";
+    rev = "520d253a00d360d7aa47d85a9c4a99ea6702acde";
+    hash = "sha256-NQ7lkTC8JGfMAsDA//Zj8IGV03b2frOuHuvjRSVNGXE=";
   };
 
   patches = [
@@ -77,7 +78,6 @@ melpaBuild {
   checkPhase = ''
     runHook preCheck
 
-    cd "$sourceRoot"
     mkfifo test.log
     cat < test.log &
     HOME=$(mktemp -d) python -m test.test

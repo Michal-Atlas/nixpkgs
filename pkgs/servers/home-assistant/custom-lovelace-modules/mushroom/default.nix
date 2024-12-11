@@ -1,20 +1,21 @@
-{ lib
-, buildNpmPackage
-, fetchFromGitHub
+{
+  lib,
+  buildNpmPackage,
+  fetchFromGitHub,
 }:
 
 buildNpmPackage rec {
   pname = "mushroom";
-  version = "4.0.0";
+  version = "4.2.1";
 
   src = fetchFromGitHub {
     owner = "piitaya";
     repo = "lovelace-mushroom";
     rev = "v${version}";
-    hash = "sha256-yoSMwNrldDfFfJWyGBZ+bJjIGYUl3FZEQ5EvLG7XzVw=";
+    hash = "sha256-EMKGf/oULS1aqaNWvw2aDxiY8jq3WihwLy1uVW4KeBU=";
   };
 
-  npmDepsHash = "sha256-3N/tsv/mtq4r9tWldxu6MIHkkfsmaU6omgtG0hIadXA=";
+  npmDepsHash = "sha256-QL0JxHsf6QcP/s+5ZCFei7kv/avhoUWoz/7tqkvW0aQ=";
 
   installPhase = ''
     runHook preInstall

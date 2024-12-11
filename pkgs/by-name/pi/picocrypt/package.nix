@@ -15,18 +15,18 @@
 
 buildGoModule rec {
   pname = "picocrypt";
-  version = "1.38";
+  version = "1.45";
 
   src = fetchFromGitHub {
     owner = "Picocrypt";
     repo = "Picocrypt";
-    rev = version;
-    hash = "sha256-rKYqzXdQrSLZhPXb4NeLSSrNJSfztsdPYbWWn+7ZYJo=";
+    rev = "refs/tags/${version}";
+    hash = "sha256-VJCLbMthxb2eWN20pXA6GOzR1FDN97KCU6ligKbKQkY=";
   };
 
   sourceRoot = "${src.name}/src";
 
-  vendorHash = "sha256-lc34GeO8y5XGRk0x6ghw/m/Ew7TDn6MOk4fc2u9UofQ=";
+  vendorHash = "sha256-ufMxDyK4EPTYLGc0AJ6EARIFCPwz+5OgZzQSGnP+WLA=";
 
   ldflags = [
     "-s"
@@ -37,7 +37,7 @@ buildGoModule rec {
     # Depends on a vendored, patched GLFW.
     glfw.buildInputs or [ ]
     ++ glfw.propagatedBuildInputs or [ ]
-    ++ lib.optionals (!stdenv.isDarwin) [
+    ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [
       gtk3
       xorg.libXxf86vm
     ];

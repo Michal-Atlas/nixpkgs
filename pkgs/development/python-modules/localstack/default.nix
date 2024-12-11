@@ -18,20 +18,27 @@
   requests,
   rich,
   semver,
+  setuptools,
+  setuptools-scm,
   tailer,
 }:
 
 buildPythonPackage rec {
   pname = "localstack";
-  version = "3.5.0";
+  version = "3.7.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "localstack";
     repo = "localstack";
     rev = "refs/tags/v${version}";
-    hash = "sha256-Sd5B4+pvUwNXfP3hsqBkUoHo06YyzUGCUHzc8f77Vx4=";
+    hash = "sha256-8xdP/qpmfqmXDt1gNhzkAGlBR6dJYznKr9+/Un6N7mA=";
   };
+
+  build-system = [
+    setuptools
+    setuptools-scm
+  ];
 
   dependencies = [
     apispec
@@ -74,5 +81,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/localstack/localstack";
     license = licenses.asl20;
     maintainers = [ ];
+    mainProgram = "localstack";
   };
 }

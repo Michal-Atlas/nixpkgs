@@ -11,28 +11,23 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "yazi";
-  version = "0.3.0";
+  version = "0.4.0";
 
   src = fetchFromGitHub {
     owner = "sxyazi";
     repo = "yazi";
     rev = "v${version}";
-    hash = "sha256-vK8P+6hn7NiympkQE8Bp45ZPqTO24VTSu0QwnXHfdXw=";
+    hash = "sha256-GA7wn2C35jwAaE1l/fw2fnQO/KH+dHQ3kuA6dV6/mCk=";
   };
 
-  cargoLock = {
-    lockFile = ./Cargo.lock;
-    outputHashes = {
-      "notify-6.1.1" = "sha256-5Ft2yvRPi2EaErcGBkF/3Xv6K7ijFGbdjmSqI4go/h4=";
-    };
-  };
+  cargoHash = "sha256-fUnYnBvOZONqLYS3r7hlr0dHX/+EXURCkIJ6w5GwhS0=";
 
   env.YAZI_GEN_COMPLETIONS = true;
   env.VERGEN_GIT_SHA = "Nixpkgs";
-  env.VERGEN_BUILD_DATE = "2024-08-01";
+  env.VERGEN_BUILD_DATE = "2024-12-08";
 
   nativeBuildInputs = [ installShellFiles ];
-  buildInputs = [ rust-jemalloc-sys ] ++ lib.optionals stdenv.isDarwin [ Foundation ];
+  buildInputs = [ rust-jemalloc-sys ] ++ lib.optionals stdenv.hostPlatform.isDarwin [ Foundation ];
 
   postInstall = ''
     installShellCompletion --cmd yazi \
@@ -51,10 +46,12 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/sxyazi/yazi";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
-      xyenon
-      matthiasbeyer
-      linsui
       eljamm
+      khaneliman
+      linsui
+      matthiasbeyer
+      uncenter
+      xyenon
     ];
     mainProgram = "yazi";
   };

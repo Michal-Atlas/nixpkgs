@@ -10,19 +10,18 @@
 
 buildPythonPackage rec {
   pname = "setuptools";
-  version = "70.0.0";
+  version = "75.1.1";
   format = "pyproject";
 
   src = fetchFromGitHub {
     owner = "pypa";
     repo = "setuptools";
     rev = "refs/tags/v${version}";
-    hash = "sha256-LXF3R9zfWylvihP2M8N94/IlgifwxUwKJFhtvcXEPB0=";
+    hash = "sha256-b8O/DrDWAbD6ht9M762fFN6kPtV8hAbn1gAN9SS7H5g=";
   };
 
   patches = [
     ./tag-date.patch
-    ./setuptools-distutils-C++.patch
   ];
 
   nativeBuildInputs = [ wheel ];

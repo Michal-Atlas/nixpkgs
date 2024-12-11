@@ -13,25 +13,20 @@
   gtksourceview5,
   xdg-utils,
   ollama,
+  vte-gtk4,
 }:
 
 python3Packages.buildPythonApplication rec {
   pname = "alpaca";
-  version = "1.0.5";
+  version = "2.9.0";
   pyproject = false; # Built with meson
 
   src = fetchFromGitHub {
     owner = "Jeffser";
     repo = "Alpaca";
-    rev = version;
-    hash = "sha256-xNQLaMvZaJq7Bmz+c8OQhta3IdFXpVB2bSNwXCRj6rY=";
+    rev = "refs/tags/${version}";
+    hash = "sha256-ionioPA69haDIyXjqU84nuTNtI32jOnhd6oCTRI6vcA=";
   };
-
-  patches = [
-    # Change the way XDG paths are handled so it makes sense outside of flatpak
-    # https://github.com/Jeffser/Alpaca/pull/187
-    ./flatpak_path_fixes.patch
-  ];
 
   nativeBuildInputs = [
     appstream
@@ -46,6 +41,7 @@ python3Packages.buildPythonApplication rec {
   buildInputs = [
     libadwaita
     gtksourceview5
+    vte-gtk4
   ];
 
   dependencies = with python3Packages; [
@@ -55,13 +51,20 @@ python3Packages.buildPythonApplication rec {
     pypdf
     pytube
     html2text
+    youtube-transcript-api
+    pydbus
   ];
 
   dontWrapGApps = true;
 
   makeWrapperArgs = [
     "\${gappsWrapperArgs[@]}"
-    "--prefix PATH : ${lib.makeBinPath [ xdg-utils ollama ]}"
+    "--prefix PATH : ${
+      lib.makeBinPath [
+        xdg-utils
+        ollama
+      ]
+    }"
     # Declared but not used in src/window.py, for later reference
     # https://github.com/flatpak/flatpak/issues/3229
     "--set FLATPAK_DEST ${placeholder "out"}"

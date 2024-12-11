@@ -1,7 +1,8 @@
-{ lib
-, buildGoModule
-, fetchFromGitHub
-, nix-update-script
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
+  nix-update-script,
 }:
 
 buildGoModule rec {
@@ -15,7 +16,7 @@ buildGoModule rec {
     hash = "sha256-ANo9OkdNVCjV5uEqr9lNNbStquNb/3oxuTfMqE2nUzo=";
   };
 
-  sourceRoot = "source/cmd/jv";
+  sourceRoot = "${src.name}/cmd/jv";
   passthru.updateScript = nix-update-script { };
 
   vendorHash = "sha256-FuUkC7iwn/jO3fHjT9nGUXc2X1QuuxPc8DAzVpzhANk=";

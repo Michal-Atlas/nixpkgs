@@ -18,11 +18,11 @@ let
     lib.concatMapStringsSep "\n" (l: builtins.toJSON l) cfg.extraCgroups
   );
   servicename =
-    if ((lib.getName cfg.package) == (lib.getName pkgs.ananicy-pp)) then "ananicy-cpp" else "ananicy";
+    if ((lib.getName cfg.package) == (lib.getName pkgs.ananicy-cpp)) then "ananicy-cpp" else "ananicy";
   # Ananicy-CPP with BPF is not supported on hardened kernels https://github.com/NixOS/nixpkgs/issues/327382
   finalPackage =
     if (servicename == "ananicy-cpp" && config.boot.kernelPackages.isHardened) then
-      (cfg.package { withBpf = false; })
+      (cfg.package.override { withBpf = false; })
     else
       cfg.package;
 in
