@@ -13,11 +13,12 @@ rustPlatform.buildRustPackage rec {
   src = fetchFromGitHub {
     owner = "mycrl";
     repo = "turn-rs";
-    rev = "refs/tags/v${version}";
+    tag = "v${version}";
     hash = "sha256-4I4mjG/euBL08v4xZdnrI8aTGVo5z2F2FDYtxKW1Qt8=";
   };
 
-  cargoHash = "sha256-yRlfqG6WEtF9ebHm8Mh4FtzfoRoaQhBnOQotSpisLck=";
+  useFetchCargoVendor = true;
+  cargoHash = "sha256-qSYGcZdMn7uelufs6z1UQtLxrRbBGNf3o1a1jR+qiqo=";
 
   passthru = {
     updateScript = nix-update-script { };

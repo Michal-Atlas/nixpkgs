@@ -6,20 +6,23 @@
   testers,
   nix-update-script,
   nb,
+  bashInteractive,
 }:
 
 stdenv.mkDerivation rec {
   pname = "nb";
-  version = "7.14.6";
+  version = "7.15.1";
 
   src = fetchFromGitHub {
     owner = "xwmx";
     repo = "nb";
     rev = version;
-    hash = "sha256-VcYE1luwNtdrOmjTDKkIAX9rmcbFyCBtnib+c9FyJuA=";
+    hash = "sha256-ep3EHqYz4xkTQSTSr0gnPqu8f04j2xAVbSpa1VUZJB4=";
   };
 
   nativeBuildInputs = [ installShellFiles ];
+
+  buildInputs = [ bashInteractive ];
 
   dontBuild = true;
 

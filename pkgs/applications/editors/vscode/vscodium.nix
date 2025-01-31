@@ -26,11 +26,11 @@ let
 
   sha256 =
     {
-      x86_64-linux = "0948jbnhjra09bvf9acrl6b2dp1xar5ajahmzy0cwf6dbidfms5y";
-      x86_64-darwin = "1a8ga66526lfy2xrgshhizmidp8aaiwvpr38rvhsx0hqb4vmm0hy";
-      aarch64-linux = "08la7kbb6myf9iz23p60vd00mrmhnizw8dgh54gb0msh8wbasidq";
-      aarch64-darwin = "01z1dx77briqzhfx45c2f2np78r11b5xm92smi9idivbsia800i3";
-      armv7l-linux = "0h3f9sy7d4ylk0ay63adhnz9s7jlpwlf3x831v8pygzm2r7k9zgc";
+      x86_64-linux = "1l8w890xb3hszz1xf17xh1h8w0n2vcxc2jg3w1yzlx06rdb8bdy5";
+      x86_64-darwin = "1pb8i73bnpgcxzjdbcnb0cgjzr07a8pkb204m1w0zgl4ffjfhak0";
+      aarch64-linux = "0qkjrnhafbdam068gz8fzwpjb6cc3r70m9n11rkcw50i3m4gljrh";
+      aarch64-darwin = "0y3wwzpqwx6hk3rpnjjj8w3la6hw0g1y1fxw73paj9zcsmmz9l0a";
+      armv7l-linux = "053zkdjdvgmibqdd8jwr7msf9awdblqcxkim0wq1zxjxq5xnzz8j";
     }
     .${system} or throwSystem;
 
@@ -41,7 +41,7 @@ callPackage ./generic.nix rec {
 
   # Please backport all compatible updates to the stable release.
   # This is important for the extension ecosystem.
-  version = "1.95.3.24321";
+  version = "1.96.4.25017";
   pname = "vscodium";
 
   executableName = "codium";
@@ -56,6 +56,11 @@ callPackage ./generic.nix rec {
   tests = nixosTests.vscodium;
 
   updateScript = ./update-vscodium.sh;
+
+  # Editing the `codium` binary (and shell scripts) within the app bundle causes the bundle's signature
+  # to be invalidated, which prevents launching starting with macOS Ventura, because VSCodium is notarized.
+  # See https://eclecticlight.co/2022/06/17/app-security-changes-coming-in-ventura/ for more information.
+  dontFixup = stdenv.hostPlatform.isDarwin;
 
   meta = with lib; {
     description = ''

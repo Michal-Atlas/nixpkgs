@@ -33,7 +33,7 @@ let
 
     vendorHash = "sha256-yam3DgY/dfwIRc7OvFltwX29x6xGlrrsK4Oj6oaGYRw=";
 
-    CGO_ENABLED = 0;
+    env.CGO_ENABLED = 0;
 
     buildPhase = ''
       runHook preBuild
@@ -48,7 +48,7 @@ let
       description = "Multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free";
       homepage = "https://github.com/chen08209/FlClash";
       license = with lib.licenses; [ gpl3Plus ];
-      maintainers = with lib.maintainers; [ aucub ];
+      maintainers = with lib.maintainers; [ ];
     };
   };
 in
@@ -101,7 +101,7 @@ flutter324.buildFlutterApplication {
     homepage = "https://github.com/chen08209/FlClash";
     mainProgram = "FlClash";
     license = with lib.licenses; [ gpl3Plus ];
-    maintainers = with lib.maintainers; [ aucub ];
+    maintainers = with lib.maintainers; [ ];
     platforms = lib.platforms.linux;
   };
 }

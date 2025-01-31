@@ -65,12 +65,12 @@ buildDotnetModule {
     ln -s -- Sonarr "$out/bin/NzbDrone"
   '';
 
-  nugetDeps = ./deps.nix;
+  nugetDeps = ./deps.json;
 
   runtimeDeps = [ sqlite ];
 
-  dotnet-sdk = dotnetCorePackages.sdk_6_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_6_0;
+  dotnet-sdk = dotnetCorePackages.sdk_6_0-bin;
+  dotnet-runtime = dotnetCorePackages.aspnetcore_6_0-bin;
 
   doCheck = true;
 

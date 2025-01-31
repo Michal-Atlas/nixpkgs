@@ -734,6 +734,7 @@ let
                 texinfo
                 unionfs-fuse
                 xorg.lndir
+                shellcheck-minimal
 
                 # add curl so that rather than seeing the test attempt to download
                 # curl's tarball, we see what it's trying to download
@@ -757,7 +758,8 @@ let
                 pkgs.mypy
                 pkgs.bootspec
               ]
-              ++ optionals clevisTest [ pkgs.klibc ];
+              ++ optionals clevisTest [ pkgs.klibc ]
+              ++ optional systemdStage1 pkgs.chroot-realpath;
 
             nix.settings = {
               substituters = mkForce [ ];

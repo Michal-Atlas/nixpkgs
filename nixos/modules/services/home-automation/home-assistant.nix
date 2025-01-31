@@ -43,7 +43,9 @@ let
   # secrets or includes, by naively unquoting strings with leading bangs
   # and at least one space-separated parameter.
   # https://www.home-assistant.io/docs/configuration/secrets/
-  renderYAMLFile = fn: yaml: pkgs.runCommandLocal fn { } ''
+  renderYAMLFile = fn: yaml: pkgs.runCommand fn {
+    preferLocalBuilds = true;
+  } ''
     cp ${format.generate fn yaml} $out
     sed -i -e "s/'\!\([a-z_]\+\) \(.*\)'/\!\1 \2/;s/^\!\!/\!/;" $out
   '';
@@ -315,11 +317,11 @@ in {
             };
 
             unit_system = mkOption {
-              type = types.nullOr (types.enum [ "metric" "imperial" ]);
+              type = types.nullOr (types.enum [ "metric" "us_customary" ]);
               default = null;
               example = "metric";
               description = ''
-                The unit system to use. This also sets temperature_unit, Celsius for Metric and Fahrenheit for Imperial.
+                The unit system to use. This also sets temperature_unit, Celsius for Metric and Fahrenheit for US Customary.
               '';
             };
 
@@ -706,6 +708,9 @@ in {
           "zha"
           "zwave"
           "zwave_js"
+
+          # Custom components, maintained manually.
+          "amshan"
         ];
       in {
         ExecStart = escapeSystemdExecArgs ([

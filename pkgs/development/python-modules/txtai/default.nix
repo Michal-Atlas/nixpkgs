@@ -87,7 +87,7 @@
   pytestCheckHook,
 }:
 let
-  version = "8.0.0";
+  version = "8.2.0";
   ann = [
     annoy
     hnswlib
@@ -226,8 +226,8 @@ buildPythonPackage {
   src = fetchFromGitHub {
     owner = "neuml";
     repo = "txtai";
-    rev = "refs/tags/v${version}";
-    hash = "sha256-qhbtKZo0C4OcXdKBGBJhfBMmY0DzbEx6n7d4y4MenN0=";
+    tag = "v${version}";
+    hash = "sha256-fMzCYw9eqlpGI5FKoyYyxT17EhUFmFP9lrCn/LFC6ks=";
   };
 
   build-system = [ setuptools ];

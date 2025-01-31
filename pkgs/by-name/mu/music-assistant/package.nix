@@ -27,14 +27,14 @@ in
 
 python.pkgs.buildPythonApplication rec {
   pname = "music-assistant";
-  version = "2.3.2";
+  version = "2.3.4";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "music-assistant";
     repo = "server";
-    rev = "refs/tags/${version}";
-    hash = "sha256-q71LczFsJAvZaWCQg4Lgzg2XX4XDFvA3x255Re00D9Q=";
+    tag = version;
+    hash = "sha256-HV2R5zMTao8akUNZMGRKbU8BIxWmdjKFLsGMqA5cfBs=";
   };
 
   patches = [
@@ -43,6 +43,9 @@ python.pkgs.buildPythonApplication rec {
       ffmpeg = "${lib.getBin ffmpeg-headless}/bin/ffmpeg";
       ffprobe = "${lib.getBin ffmpeg-headless}/bin/ffprobe";
     })
+
+    # Disable interactive dependency resolution, which clashes with the immutable Python environment
+    ./dont-install-deps.patch
   ];
 
   postPatch = ''
@@ -52,6 +55,17 @@ python.pkgs.buildPythonApplication rec {
 
   build-system = with python.pkgs; [
     setuptools
+  ];
+
+  pythonRelaxDeps = [
+    "aiohttp"
+    "colorlog"
+    "cryptography"
+    "mashumaro"
+    "orjson"
+    "pillow"
+    "xmltodict"
+    "zeroconf"
   ];
 
   dependencies =
@@ -81,6 +95,7 @@ python.pkgs.buildPythonApplication rec {
       mashumaro
       memory-tempfile
       music-assistant-frontend
+      music-assistant-models
       orjson
       pillow
       python-slugify

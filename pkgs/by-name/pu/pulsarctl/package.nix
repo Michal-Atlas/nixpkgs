@@ -11,13 +11,13 @@
 
 buildGoModule rec {
   pname = "pulsarctl";
-  version = "4.0.0.8";
+  version = "4.0.1.2";
 
   src = fetchFromGitHub {
     owner = "streamnative";
     repo = "pulsarctl";
     rev = "v${version}";
-    hash = "sha256-+td/kQlP978Tuuop0qGFrnRXMZXSa53GRuwwfyUOOmg=";
+    hash = "sha256-3VONhrKViblh0LXy/hMVgzCN54JkDYw3v/YrqXuk6l8=";
   };
 
   vendorHash = "sha256-wNUTJn7Ar+GlePEhdr6xeolAiltJdAoIs5o5uDo8Ibs=";

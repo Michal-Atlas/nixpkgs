@@ -227,7 +227,7 @@ in
     environmentFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       description = ''
-        File path containing environment variables for configuring the k3s service in the format of an EnvironmentFile. See systemd.exec(5).
+        File path containing environment variables for configuring the k3s service in the format of an EnvironmentFile. See {manpage}`systemd.exec(5)`.
       '';
       default = null;
     };
@@ -462,27 +462,25 @@ in
       ++ (lib.optional (cfg.role != "server" && cfg.charts != { })
         "k3s: Helm charts are only made available to the cluster on server nodes (role == server), they will be ignored by this node."
       )
-      ++ (lib.optional (cfg.disableAgent && cfg.images != [ ])
-        "k3s: Images are only imported on nodes with an enabled agent, they will be ignored by this node"
+      ++ (lib.optional (
+        cfg.disableAgent && cfg.images != [ ]
+      ) "k3s: Images are only imported on nodes with an enabled agent, they will be ignored by this node")
+      ++ (lib.optional (
+        cfg.role == "agent" && cfg.configPath == null && cfg.serverAddr == ""
+      ) "k3s: ServerAddr or configPath (with 'server' key) should be set if role is 'agent'")
+      ++ (lib.optional
+        (cfg.role == "agent" && cfg.configPath == null && cfg.tokenFile == null && cfg.token == "")
+        "k3s: Token or tokenFile or configPath (with 'token' or 'token-file' keys) should be set if role is 'agent'"
       );
 
     assertions = [
       {
-        assertion = cfg.role == "agent" -> (cfg.configPath != null || cfg.serverAddr != "");
-        message = "serverAddr or configPath (with 'server' key) should be set if role is 'agent'";
-      }
-      {
-        assertion =
-          cfg.role == "agent" -> cfg.configPath != null || cfg.tokenFile != null || cfg.token != "";
-        message = "token or tokenFile or configPath (with 'token' or 'token-file' keys) should be set if role is 'agent'";
-      }
-      {
         assertion = cfg.role == "agent" -> !cfg.disableAgent;
-        message = "disableAgent must be false if role is 'agent'";
+        message = "k3s: disableAgent must be false if role is 'agent'";
       }
       {
         assertion = cfg.role == "agent" -> !cfg.clusterInit;
-        message = "clusterInit must be false if role is 'agent'";
+        message = "k3s: clusterInit must be false if role is 'agent'";
       }
     ];
 

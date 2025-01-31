@@ -26,24 +26,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "swtpm";
-  version = "0.8.2";
+  version = "0.10.0";
 
   src = fetchFromGitHub {
     owner = "stefanberger";
     repo = "swtpm";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-48/BOzGPoKr/BGEXFo3FXWr6ZoPB+ixZIvv78g6L294=";
+    hash = "sha256-ZEpThaLgieTTBJ9Rouklepq6Bvo/h+2sbabNOo++fc0=";
   };
-
-  patches = [
-    # Enable 64-bit file API on 32-bit systems:
-    #   https://github.com/stefanberger/swtpm/pull/941
-    (fetchpatch {
-      name = "64-bit-file-api.patch";
-      url = "https://github.com/stefanberger/swtpm/commit/599e2436d4f603ef7c83fad11d76b5546efabefc.patch";
-      hash = "sha256-cS/BByOJeNNevQ1B3Ij1kykJwixVwGoikowx7j9gRmA=";
-    })
-  ];
 
   nativeBuildInputs = [
     pkg-config
@@ -115,6 +105,10 @@ stdenv.mkDerivation (finalAttrs: {
     substituteInPlace tests/test_swtpm_setup_create_cert --replace \
         '$CERTTOOL' \
         'LC_ALL=C.UTF-8 $CERTTOOL'
+
+    substituteInPlace tests/test_tpm2_swtpm_cert --replace \
+        'certtool' \
+        'LC_ALL=C.UTF-8 certtool'
   '';
 
   doCheck = true;

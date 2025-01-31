@@ -71,7 +71,7 @@ let
     touch $out
   '';
 
-  groupAccessAvailable = versionAtLeast postgresql.version "11.0";
+  groupAccessAvailable = versionAtLeast cfg.finalPackage.version "11.0";
 
   extensionNames = map getName postgresql.installedExtensions;
   extensionInstalled = extension: elem extension extensionNames;
@@ -111,6 +111,17 @@ in
 
       package = mkPackageOption pkgs "postgresql" {
         example = "postgresql_15";
+      };
+
+      finalPackage = mkOption {
+        type = types.package;
+        readOnly = true;
+        default = postgresql;
+        defaultText = "with config.services.postgresql; package.withPackages extensions";
+        description = ''
+          The postgresql package that will effectively be used in the system.
+          It consists of the base package with plugins applied to it.
+        '';
       };
 
       checkConfig = mkOption {
@@ -583,7 +594,7 @@ in
 
     users.groups.postgres.gid = config.ids.gids.postgres;
 
-    environment.systemPackages = [ postgresql ];
+    environment.systemPackages = [ cfg.finalPackage ];
 
     environment.pathsToLink = [
       "/share/postgresql"
@@ -601,7 +612,7 @@ in
 
       environment.PGDATA = cfg.dataDir;
 
-      path = [ postgresql ];
+      path = [ cfg.finalPackage ];
 
       preStart = ''
         if ! test -e ${cfg.dataDir}/PG_VERSION; then
@@ -682,7 +693,7 @@ in
           # receiving systemd's SIGINT.
           TimeoutSec = 120;
 
-          ExecStart = "${postgresql}/bin/postgres";
+          ExecStart = "${cfg.finalPackage}/bin/postgres";
 
           # Hardening
           CapabilityBoundingSet = [ "" ];
@@ -722,10 +733,12 @@ in
           ] ++ lib.optionals (any extensionInstalled [ "plv8" ]) [ "@pkey" ];
           UMask = if groupAccessAvailable then "0027" else "0077";
         }
-        (mkIf (cfg.dataDir != "/var/lib/postgresql") {
+        (mkIf (cfg.dataDir != "/var/lib/postgresql/${cfg.package.psqlSchema}") {
+          # The user provides their own data directory
           ReadWritePaths = [ cfg.dataDir ];
         })
         (mkIf (cfg.dataDir == "/var/lib/postgresql/${cfg.package.psqlSchema}") {
+          # Provision the default data directory
           StateDirectory = "postgresql postgresql/${cfg.package.psqlSchema}";
           StateDirectoryMode = if groupAccessAvailable then "0750" else "0700";
         })
@@ -733,7 +746,6 @@ in
 
       unitConfig.RequiresMountsFor = "${cfg.dataDir}";
     };
-
   };
 
   meta.doc = ./postgresql.md;

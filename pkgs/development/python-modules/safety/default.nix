@@ -26,17 +26,17 @@
 
 buildPythonPackage rec {
   pname = "safety";
-  version = "3.2.11";
+  version = "3.2.14";
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pyupio";
     repo = "safety";
-    rev = "refs/tags/${version}";
-    hash = "sha256-ekJ0o+KWS8Fih1M/scboGEjETX0/2Uh6h/zne4h+3wI=";
+    tag = version;
+    hash = "sha256-/RB+ota6dnlbJvtOOoIOHD+BjBzZIJRhEOAUQggUgB4=";
   };
 
   postPatch = ''
@@ -54,7 +54,7 @@ buildPythonPackage rec {
   build-system = [ setuptools ];
 
   pythonRelaxDeps = [
-    "filelock"
+    "pydantic"
   ];
 
   dependencies = [
@@ -98,13 +98,13 @@ buildPythonPackage rec {
     export HOME=$(mktemp -d)
   '';
 
-  meta = with lib; {
+  meta = {
     description = "Checks installed dependencies for known vulnerabilities";
     mainProgram = "safety";
     homepage = "https://github.com/pyupio/safety";
     changelog = "https://github.com/pyupio/safety/blob/${version}/CHANGELOG.md";
-    license = licenses.mit;
-    maintainers = with maintainers; [
+    license = lib.licenses.mit;
+    maintainers = with lib.maintainers; [
       thomasdesr
       dotlambda
     ];
