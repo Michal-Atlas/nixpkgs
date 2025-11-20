@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  curl,
+  ipget,
 }:
 lib.fetchers.withNormalizedHash
   {
@@ -13,36 +13,31 @@ lib.fetchers.withNormalizedHash
   }
   (
     {
-      ipfs,
-      url ? "",
-      curlOpts ? "",
+      cid,
+      name ? "ipfs-${cid}",
+      ipgetOpts ? "",
       outputHash,
       outputHashAlgo,
       meta ? { },
-      port ? "8080",
       postFetch ? "",
       preferLocalBuild ? true,
     }:
     stdenv.mkDerivation {
-      name = ipfs;
+      inherit name;
       builder = ./builder.sh;
-      nativeBuildInputs = [ curl ];
+      nativeBuildInputs = [ ipget ];
 
       # New-style output content requirements.
       inherit outputHash outputHashAlgo;
       outputHashMode = "recursive";
 
       inherit
-        curlOpts
+        ipgetOpts
         postFetch
-        ipfs
-        url
-        port
+        cid
         meta
         ;
 
-      # Doing the download on a remote machine just duplicates network
-      # traffic, so don't do that.
       inherit preferLocalBuild;
     }
   )
