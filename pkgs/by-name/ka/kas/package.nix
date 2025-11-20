@@ -8,17 +8,24 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "kas";
-  version = "4.7";
+  version = "5.0";
+  format = "pyproject";
 
   src = fetchFromGitHub {
     owner = "siemens";
-    repo = pname;
+    repo = "kas";
     tag = version;
-    hash = "sha256-P2I3lLa8kuCORdlrwcswrWFwOA8lW2WL4Apv/2T7+f8=";
+    hash = "sha256-KSmLQBOYyuO9o3YZYPJPDPeGudtNYIC2yghAu98sf3Q=";
   };
 
-  propagatedBuildInputs = with python3.pkgs; [
+  patches = [ ./pass-terminfo-env.patch ];
+
+  build-system = with python3.pkgs; [
     setuptools
+  ];
+
+  dependencies = with python3.pkgs; [
+    setuptools # pkg_resources is imported during runtime
     kconfiglib
     jsonschema
     distro
@@ -30,8 +37,10 @@ python3.pkgs.buildPythonApplication rec {
   doCheck = false;
   passthru.tests.version = testers.testVersion {
     package = kas;
-    command = "${pname} --version";
+    command = "kas --version";
   };
+
+  pythonImportsCheck = [ "kas" ];
 
   meta = with lib; {
     homepage = "https://github.com/siemens/kas";

@@ -1,27 +1,27 @@
 {
   lib,
   fetchFromGitHub,
-  flutter324,
+  flutter332,
   autoPatchelfHook,
   buildGoModule,
   libayatana-appindicator,
 }:
 
 let
-  version = "1.6.10";
+  version = "1.8.2";
 
   src = fetchFromGitHub {
     owner = "GopeedLab";
     repo = "gopeed";
     tag = "v${version}";
-    hash = "sha256-sTKPSgy1jDavEd/IM8F6dxojp8oOQTo3/w/YV21JR/Q=";
+    hash = "sha256-KezASQIqyu4GsKaGAhge7gEYMe57GMgzjXlAbmyDI3Y=";
   };
 
   metaCommon = {
-    description = "Modern download manager that supports all platforms";
+    description = "Modern download manager";
     homepage = "https://github.com/GopeedLab/gopeed";
     license = with lib.licenses; [ gpl3Plus ];
-    maintainers = with lib.maintainers; [ ];
+    maintainers = [ ];
     platforms = lib.platforms.linux;
   };
 
@@ -29,7 +29,7 @@ let
     inherit version src;
     pname = "libgopeed";
 
-    vendorHash = "sha256-rJriTQF4tf7sZXcEDS6yZXk3xUI8Cav8OC7o4egpfIw=";
+    vendorHash = "sha256-x9M9zwS5FhsIyGGBi0szWHMfLXCFVgqv8bfSxhHZT2Y=";
 
     buildPhase = ''
       runHook preBuild
@@ -44,15 +44,15 @@ let
     meta = metaCommon;
   };
 in
-flutter324.buildFlutterApplication {
-  inherit version src libgopeed;
+flutter332.buildFlutterApplication {
+  inherit version src;
   pname = "gopeed";
 
   sourceRoot = "${src.name}/ui/flutter";
 
   pubspecLock = lib.importJSON ./pubspec.lock.json;
 
-  gitHashes.permission_handler_windows = "sha256-MRTmuH0MfhGaMEb9bRotimAPRlFyl3ovtJUJ2WK7+DA=";
+  gitHashes = lib.importJSON ./gitHashes.json;
 
   nativeBuildInputs = [ autoPatchelfHook ];
 
@@ -61,7 +61,7 @@ flutter324.buildFlutterApplication {
   preBuild = ''
     mkdir -p linux/bundle/lib
     cp ${libgopeed}/lib/libgopeed.so linux/bundle/lib/libgopeed.so
-    cp ${libgopeed}/bin/host assets/host/host
+    cp ${libgopeed}/bin/host assets/exec/host
   '';
 
   postInstall = ''
@@ -75,7 +75,10 @@ flutter324.buildFlutterApplication {
       --add-rpath $out/app/gopeed/lib $out/app/gopeed/gopeed
   '';
 
-  passthru.updateScript = ./update.sh;
+  passthru = {
+    inherit libgopeed;
+    updateScript = ./update.sh;
+  };
 
   meta = metaCommon // {
     mainProgram = "gopeed";

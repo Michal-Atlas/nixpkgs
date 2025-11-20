@@ -27,6 +27,7 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [ libusb1 ];
   nativeBuildInputs = [ pkg-config ];
 
+  doInstallCheck = true;
   udevRules = pkgs.writeText "dediprog.rules" ''
     ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="dada", MODE="660", GROUP="plugdev"
   '';
@@ -46,6 +47,9 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Linux software for DediProg SF100/SF600 programmers";
     license = lib.licenses.gpl2;
     platforms = lib.platforms.linux;
-    maintainers = with lib.maintainers; [ thillux ];
+    maintainers = with lib.maintainers; [
+      thillux
+      felixsinger
+    ];
   };
 })

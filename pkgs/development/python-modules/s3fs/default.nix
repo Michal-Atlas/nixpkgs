@@ -3,9 +3,6 @@
   buildPythonPackage,
   fetchFromGitHub,
 
-  # buildInputs
-  docutils,
-
   # build-system
   setuptools,
 
@@ -18,34 +15,38 @@
   flask,
   flask-cors,
   moto,
+  pytest-asyncio,
   pytestCheckHook,
 }:
 
 buildPythonPackage rec {
   pname = "s3fs";
-  version = "2025.2.0";
+  version = "2025.9.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "fsspec";
     repo = "s3fs";
     tag = version;
-    hash = "sha256-nnfvccORDspj54sRxL3d0hn4MpzKYGKE2Kl0v/wLaNw=";
+    hash = "sha256-Wb9y2l6/J0EQQwB4AqasqvSVSURylkoh2D2wvw4NjlE=";
   };
 
-  buildInputs = [ docutils ];
-
-  build-system = [ setuptools ];
-
-  pythonRelaxDeps = [
-    "fsspec"
+  build-system = [
+    setuptools
   ];
+
+  pythonRelaxDeps = [ "fsspec" ];
 
   dependencies = [
     aiobotocore
-    aiohttp
     fsspec
+    aiohttp
   ];
+
+  optional-dependencies = {
+    awscli = aiobotocore.optional-dependencies.awscli;
+    boto3 = aiobotocore.optional-dependencies.boto3;
+  };
 
   pythonImportsCheck = [ "s3fs" ];
 
@@ -53,86 +54,13 @@ buildPythonPackage rec {
     flask
     flask-cors
     moto
+    pytest-asyncio
     pytestCheckHook
   ];
 
   disabledTests = [
     # require network access
     "test_async_close"
-
-    # AssertionError: assert ['x', 'y'] == []
-    "test_with_data"
-
-    # AssertionError: assert ['1', 'x', 'y'] == []
-    "test_clear_empty"
-    "test_no_dircache"
-
-    # KeyError: 'ChecksumAlgorithm'
-    "test_info"
-
-    # KeyError:
-    # del d[1]
-    "test_complex_keys"
-
-    # TypeError: string indices must be integers, not 'str'
-    "test_bucket_versioning"
-    "test_bulk_delete"
-    "test_copy_with_source_and_destination_as_list"
-    "test_cp_directory_recursive"
-    "test_dynamic_add_rm"
-    "test_get_directory_to_existing_directory"
-    "test_get_directory_to_new_directory"
-    "test_get_directory_without_files_with_same_name_prefix"
-    "test_get_file_info_with_selector"
-    "test_get_file_to_existing_directory"
-    "test_get_file_to_file_in_existing_directory"
-    "test_get_file_to_file_in_new_directory"
-    "test_get_file_to_new_directory"
-    "test_get_glob_edge_cases"
-    "test_get_glob_to_existing_directory"
-    "test_get_glob_to_new_directory"
-    "test_get_list_of_files_to_existing_directory"
-    "test_get_list_of_files_to_new_directory"
-    "test_get_with_source_and_destination_as_list"
-    "test_move[False]"
-    "test_move[True]"
-    "test_new_bucket"
-    "test_new_bucket_auto"
-    "test_pipe_exclusive"
-    "test_put_directory_recursive"
-    "test_put_directory_to_existing_directory"
-    "test_put_directory_to_new_directory"
-    "test_put_directory_without_files_with_same_name_prefix"
-    "test_put_file_to_existing_directory"
-    "test_put_file_to_file_in_existing_directory"
-    "test_put_file_to_file_in_new_directory"
-    "test_put_file_to_new_directory"
-    "test_put_glob_edge_cases"
-    "test_put_glob_to_existing_directory"
-    "test_put_glob_to_new_directory"
-    "test_put_list_of_files_to_existing_directory"
-    "test_put_list_of_files_to_new_directory"
-    "test_rm"
-    "test_rm_invalidates_cache"
-    "test_rm_recursive_folder"
-    "test_s3_big_ls"
-    "test_s3fs_etag_preserving_multipart_copy"
-    "test_tags"
-
-    # ExceptionGroup: errors while tearing down <Function test_copy_two_files_new_directory> (2 sub-exceptions)
-    "test_copy_directory_to_existing_directory"
-    "test_copy_directory_to_new_directory"
-    "test_copy_directory_without_files_with_same_name_prefix"
-    "test_copy_file_to_existing_directory"
-    "test_copy_file_to_file_in_existing_directory"
-    "test_copy_file_to_file_in_new_directory"
-    "test_copy_file_to_new_directory"
-    "test_copy_glob_edge_cases"
-    "test_copy_glob_to_existing_directory"
-    "test_copy_glob_to_new_directory"
-    "test_copy_list_of_files_to_existing_directory"
-    "test_copy_list_of_files_to_new_directory"
-    "test_copy_two_files_new_directory"
   ];
 
   __darwinAllowLocalNetworking = true;

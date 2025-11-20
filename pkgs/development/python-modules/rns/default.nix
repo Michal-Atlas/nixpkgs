@@ -1,33 +1,27 @@
 {
   lib,
-  buildPythonPackage,
-  fetchFromGitHub,
-  replaceVars,
-  esptool,
-
-  # build-system
-  setuptools,
-
-  # dependencies
   bleak,
+  buildPythonPackage,
   cryptography,
+  esptool,
+  fetchFromGitHub,
   netifaces,
   pyserial,
-
-  # tests
+  replaceVars,
+  setuptools,
   versionCheckHook,
 }:
 
 buildPythonPackage rec {
   pname = "rns";
-  version = "0.9.2";
+  version = "1.0.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "markqvist";
     repo = "Reticulum";
     tag = version;
-    hash = "sha256-BnR+gVcV4ul/z6Yoj4KFisBqGK0HOHfsisTNqLPrgF8=";
+    hash = "sha256-Tvn51iODNES35VRDR7/Ev/8El5XDe1nObujrjhcvrM8=";
   };
 
   patches = [
@@ -51,13 +45,15 @@ buildPythonPackage rec {
     versionCheckHook
   ];
   versionCheckProgram = "${placeholder "out"}/bin/rncp";
-  versionCheckProgramArg = [ "--version" ];
+  versionCheckProgramArg = "--version";
 
   meta = {
     description = "Cryptography-based networking stack for wide-area networks";
     homepage = "https://reticulum.network";
-    changelog = "https://github.com/markqvist/Reticulum/blob/${version}/Changelog.md";
-    license = lib.licenses.mit;
+    changelog = "https://github.com/markqvist/Reticulum/blob/${src.tag}/Changelog.md";
+    # Reticulum License
+    # https://github.com/markqvist/Reticulum/blob/master/LICENSE
+    license = lib.licenses.unfree;
     maintainers = with lib.maintainers; [
       fab
       qbit

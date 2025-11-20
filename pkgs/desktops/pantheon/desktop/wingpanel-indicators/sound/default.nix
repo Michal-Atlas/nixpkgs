@@ -20,13 +20,13 @@
 
 stdenv.mkDerivation rec {
   pname = "wingpanel-indicator-sound";
-  version = "8.0.0";
+  version = "8.0.2";
 
   src = fetchFromGitHub {
     owner = "elementary";
-    repo = pname;
-    rev = version;
-    sha256 = "sha256-5VJnRFjyiy+CIOrwabmgWjVF4Jh0lfkhPUoGXivnbtY=";
+    repo = "wingpanel-indicator-sound";
+    tag = version;
+    hash = "sha256-a2yl6HKNLo3660OPEp/9AtwpPerLGYD/k8fl+R5ct/g=";
   };
 
   nativeBuildInputs = [
@@ -57,6 +57,6 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/elementary/wingpanel-indicator-sound";
     license = licenses.gpl3Plus;
     platforms = platforms.linux;
-    maintainers = teams.pantheon.members;
+    teams = [ teams.pantheon ];
   };
 }

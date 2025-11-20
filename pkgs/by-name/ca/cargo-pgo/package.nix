@@ -10,12 +10,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "kobzol";
-    repo = pname;
+    repo = "cargo-pgo";
     rev = "v${version}";
     hash = "sha256-FmZllibhesZY/8kIMnx4VfQrYF6+/cai7Gozda/3bMY=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-uOwWCSXxxnMCFS0+aFPUHSiSWSwNZPtL8NJVCCCDzAc=";
 
   # Integration tests do not run in Nix build environment due to needing to

@@ -7,13 +7,13 @@
 
 stdenvNoCC.mkDerivation {
   pname = "retroarch-assets";
-  version = "1.20.0-unstable-2025-01-30";
+  version = "1.22.0-unstable-2025-11-10";
 
   src = fetchFromGitHub {
     owner = "libretro";
     repo = "retroarch-assets";
-    rev = "9afd2b8a9d16fc25c5a046122bc0d2b3c965980e";
-    hash = "sha256-PWwq9aNj0u+Dc9Q7lSRivER1Fd42H6u2auU/XLlg61k=";
+    rev = "76cc6cf03507429c5a136cb50d83a14e05430fcd";
+    hash = "sha256-0kxgfuqBoqhT9/D04bHj0Nd0yUYJUa39rSoxTovV6xE=";
   };
 
   makeFlags = [
@@ -33,7 +33,7 @@ stdenvNoCC.mkDerivation {
     description = "Assets needed for RetroArch";
     homepage = "https://libretro.com";
     license = licenses.mit;
-    maintainers = with maintainers; teams.libretro.members ++ [ ];
+    teams = [ teams.libretro ];
     platforms = platforms.all;
   };
 }

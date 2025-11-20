@@ -14,7 +14,7 @@
   libsoup_2_4,
   json-glib,
   sqlite,
-  webkitgtk_4_0,
+  # webkitgtk_4_0,
   libmanette,
   libXtst,
   wrapGAppsHook3,
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     owner = "tkashkin";
-    repo = pname;
+    repo = "GameHub";
     rev = "${version}-master";
     hash = "sha256-dBGzXwDO9BvnEIcdfqlGnMzUdBqaVA96Ds0fY6eukes=";
   };
@@ -50,10 +50,12 @@ stdenv.mkDerivation rec {
     libsoup_2_4
     libXtst
     sqlite
-    webkitgtk_4_0
+    # webkitgtk_4_0
   ];
 
   meta = with lib; {
+    # webkitgtk_4_0 was removed
+    broken = true;
     homepage = "https://tkashkin.github.io/projects/gamehub";
     description = "Unified library for all your games";
     longDescription = ''

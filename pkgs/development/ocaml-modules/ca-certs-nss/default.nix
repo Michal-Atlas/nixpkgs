@@ -3,7 +3,7 @@
   buildDunePackage,
   fetchurl,
   digestif,
-  mirage-clock,
+  mirage-ptime,
   x509,
   logs,
   fmt,
@@ -14,17 +14,17 @@
 
 buildDunePackage rec {
   pname = "ca-certs-nss";
-  version = "3.108";
+  version = "3.117";
 
   minimalOCamlVersion = "4.13";
 
   src = fetchurl {
     url = "https://github.com/mirage/ca-certs-nss/releases/download/v${version}/ca-certs-nss-${version}.tbz";
-    hash = "sha256-mRHj0vnWDPyCxya3K1qxREkF7eVac8LRY6gOJJdzFTM=";
+    hash = "sha256-SdcTJ3Og5h5XvqnDqp1flw/hwLWINjlqeT/vIwAg380=";
   };
 
   propagatedBuildInputs = [
-    mirage-clock
+    mirage-ptime
     x509
     digestif
   ];

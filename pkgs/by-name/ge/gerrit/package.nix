@@ -1,17 +1,18 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   fetchurl,
+  gitUpdater,
   nixosTests,
 }:
 
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation rec {
   pname = "gerrit";
-  version = "3.11.1";
+  version = "3.13.1";
 
   src = fetchurl {
     url = "https://gerrit-releases.storage.googleapis.com/gerrit-${version}.war";
-    hash = "sha256-7gJyvFOisukzd2Vmqci7CiJqegYQSYQZvnSvR+Y9HM4=";
+    hash = "sha256-4+Z1q1cHEM5IaG+SAS7JgiCypfjM8W2Zaa25/KGaoqw=";
   };
 
   buildCommand = ''
@@ -20,6 +21,11 @@ stdenv.mkDerivation rec {
   '';
 
   passthru = {
+    updateScript = gitUpdater {
+      url = "https://gerrit.googlesource.com/gerrit";
+      rev-prefix = "v";
+      allowedVersions = "^[0-9\\.]+$";
+    };
     # A list of plugins that are part of the gerrit.war file.
     # Use `java -jar gerrit.war ls | grep plugins/` to generate that list.
     plugins = [

@@ -10,12 +10,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "sharkdp";
-    repo = pname;
+    repo = "vivid";
     rev = "v${version}";
     hash = "sha256-mxBBfezaMM2dfiXK/s+Htr+i5GJP1xVSXzkmYxEuwNs=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-oP5/G/PSkwn4JruLQOGtM8M2uPt4Q88bU3kNmXUK4JE=";
 
   meta = with lib; {

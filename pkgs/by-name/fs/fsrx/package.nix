@@ -12,12 +12,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "thatvegandev";
-    repo = pname;
+    repo = "fsrx";
     rev = "v${version}";
     sha256 = "sha256-hzfpjunP20WCt3erYu7AO7A3nz+UMKdFzWUA5jASbVA=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-hOE05t3gjul7uOt14vr5hAmGHTPgxJk7EOKJhZ4XgCo=";
 
   passthru = {

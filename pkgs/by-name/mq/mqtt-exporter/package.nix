@@ -1,22 +1,20 @@
 {
   lib,
-  python3,
   fetchFromGitHub,
+  python3,
 }:
 
 python3.pkgs.buildPythonApplication rec {
   pname = "mqtt-exporter";
-  version = "1.6.1";
+  version = "1.8.1-1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "kpetremann";
     repo = "mqtt-exporter";
     tag = "v${version}";
-    hash = "sha256-XTgnD3H48KKclPhfmBPiWQPaJkfiBxjq2YQusOPLFJQ=";
+    hash = "sha256-FBB8KvSLrcJ9pdfVq18ykovwApNZoOcU0xTfvAWTxpc=";
   };
-
-  pythonRelaxDeps = [ "prometheus-client" ];
 
   build-system = with python3.pkgs; [ setuptools ];
 
@@ -35,7 +33,7 @@ python3.pkgs.buildPythonApplication rec {
   meta = {
     description = "Generic MQTT Prometheus exporter for IoT";
     homepage = "https://github.com/kpetremann/mqtt-exporter";
-    changelog = "https://github.com/kpetremann/mqtt-exporter/releases/tag/v${version}";
+    changelog = "https://github.com/kpetremann/mqtt-exporter/releases/tag/${src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
     mainProgram = "mqtt-exporter";

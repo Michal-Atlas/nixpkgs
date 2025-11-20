@@ -2,21 +2,22 @@
   lib,
   buildNpmPackage,
   fetchFromGitHub,
+  nixosTests,
   nodejs,
 }:
 
 buildNpmPackage rec {
   pname = "pairdrop";
-  version = "1.11.1";
+  version = "1.11.2";
 
   src = fetchFromGitHub {
     owner = "schlagmichdoch";
     repo = "PairDrop";
     rev = "v${version}";
-    hash = "sha256-Ovro5vMf28Wz6srEmUYOMFZE746/mcEDcs+f8rG7X+g=";
+    hash = "sha256-LvrBIdBjb4M2LidEJVCdK2uYydsJY+Cr5eXdfbS46dk=";
   };
 
-  npmDepsHash = "sha256-vxH0YmSS3CXOrMQ4Tue8jcwjTZNfiT2Lnhs0O6xrfpQ=";
+  npmDepsHash = "sha256-Ovi5RzWPCVk6LkZ33Anb8abkyu+IrEaCXE/etBgsHYU=";
 
   dontNpmBuild = true;
 
@@ -35,6 +36,12 @@ buildNpmPackage rec {
 
     runHook postInstall
   '';
+
+  passthru = {
+    tests = {
+      inherit (nixosTests) pairdrop;
+    };
+  };
 
   meta = with lib; {
     description = "Local file sharing in your browser";

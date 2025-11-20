@@ -191,7 +191,8 @@ in
     environment.systemPackages = [
       nixPackage
       pkgs.nix-info
-    ] ++ lib.optional (config.programs.bash.completion.enable) pkgs.nix-bash-completions;
+    ]
+    ++ lib.optional (config.programs.bash.completion.enable) pkgs.nix-bash-completions;
 
     systemd.packages = [ nixPackage ];
 
@@ -213,12 +214,13 @@ in
         nixPackage
         pkgs.util-linux
         config.programs.ssh.package
-      ] ++ lib.optionals cfg.distributedBuilds [ pkgs.gzip ];
+      ]
+      ++ lib.optionals cfg.distributedBuilds [ pkgs.gzip ];
 
       environment =
         cfg.envVars
         // {
-          CURL_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt";
+          CURL_CA_BUNDLE = config.security.pki.caBundle;
         }
         // config.networking.proxy.envVars;
 
@@ -230,6 +232,7 @@ in
         IOSchedulingPriority = cfg.daemonIOSchedPriority;
         LimitNOFILE = 1048576;
         Delegate = "yes";
+        DelegateSubgroup = "supervisor";
       };
 
       restartTriggers = [ config.environment.etc."nix/nix.conf".source ];

@@ -19,11 +19,11 @@
 
 stdenv.mkDerivation rec {
   pname = "baobab";
-  version = "47.0";
+  version = "49.0";
 
   src = fetchurl {
     url = "mirror://gnome/sources/baobab/${lib.versions.major version}/baobab-${version}.tar.xz";
-    hash = "sha256-uI90+cBS08I4j3Bi0ijPXpJ1Raz3QIxWhB34DM0fnDc=";
+    hash = "sha256-GVwBgtxNf2lN0LTuNucuD0q3V4JfwjgjNAnuwt9IP64=";
   };
 
   nativeBuildInputs = [
@@ -58,7 +58,7 @@ stdenv.mkDerivation rec {
     mainProgram = "baobab";
     homepage = "https://apps.gnome.org/Baobab/";
     license = licenses.gpl2Plus;
-    maintainers = teams.gnome.members;
+    teams = [ teams.gnome ];
     platforms = platforms.unix;
   };
 }

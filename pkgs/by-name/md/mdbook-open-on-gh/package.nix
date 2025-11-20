@@ -10,12 +10,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "badboy";
-    repo = pname;
+    repo = "mdbook-open-on-gh";
     rev = version;
     hash = "sha256-73738Vei7rQ67LQIOrHPGOtsBnHClaXClRWDmA5pP58=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-6BR/xXo5pBv7n5beqgY9kEe24o/lZl1sit0uumSEbe8=";
 
   meta = with lib; {

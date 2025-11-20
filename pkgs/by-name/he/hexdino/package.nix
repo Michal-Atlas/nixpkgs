@@ -10,12 +10,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "Luz";
-    repo = pname;
+    repo = "hexdino";
     rev = version;
     hash = "sha256-glbyftCJiP0/5trW7DOcVCU2q4ZH3zFK96eyGuYR8eY=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-NfVtNoTDGx3MGOe+bUOCgjSs8ZTfxMSCTp09sXOfUPs=";
 
   meta = with lib; {

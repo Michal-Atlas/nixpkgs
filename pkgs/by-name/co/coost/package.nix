@@ -30,18 +30,20 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [ cmake ];
   buildInputs = lib.optional withCurl curl ++ lib.optional withOpenSSL openssl;
 
-  cmakeFlags =
-    [
-      "-DBUILD_SHARED_LIBS=ON"
-    ]
-    ++ lib.optional withCurl "-DWITH_LIBCURL=ON"
-    ++ lib.optional withOpenSSL "-DWITH_OPENSSL=ON";
+  cmakeFlags = [
+    "-DBUILD_SHARED_LIBS=ON"
+  ]
+  ++ lib.optional withCurl "-DWITH_LIBCURL=ON"
+  ++ lib.optional withOpenSSL "-DWITH_OPENSSL=ON";
 
   outputs = [
     "out"
     "dev"
   ];
-  passthru.updateScript = gitUpdater { };
+  passthru.updateScript = gitUpdater {
+    rev-prefix = "v";
+    allowedVersions = "^[0-9]";
+  };
 
   meta = with lib; {
     description = "Tiny boost library in C++11";

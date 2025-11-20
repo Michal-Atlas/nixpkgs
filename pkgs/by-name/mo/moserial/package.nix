@@ -3,6 +3,7 @@
   stdenv,
   fetchFromGitLab,
   autoreconfHook,
+  wrapGAppsHook3,
   intltool,
   itstool,
   pkg-config,
@@ -21,7 +22,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitLab {
     domain = "gitlab.gnome.org";
     owner = "GNOME";
-    repo = pname;
+    repo = "moserial";
     rev = "moserial_${lib.replaceStrings [ "." ] [ "_" ] version}";
     sha256 = "sha256-wfdI51ECqVNcUrIVjYBijf/yqpiwSQeMiKaVJSSma3k=";
   };
@@ -32,6 +33,7 @@ stdenv.mkDerivation rec {
     itstool
     pkg-config
     vala
+    wrapGAppsHook3
   ];
 
   buildInputs = [

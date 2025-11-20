@@ -9,7 +9,6 @@
   openssl,
   sqlite,
   stdenv,
-  darwin,
   alsa-lib,
   xorg,
 }:
@@ -41,34 +40,17 @@ rustPlatform.buildRustPackage rec {
     rustPlatform.bindgenHook
   ];
 
-  buildInputs =
-    [
-      dbus
-      ffmpeg
-      oniguruma
-      openssl
-      sqlite
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin (
-      with darwin.apple_sdk_12_3.frameworks;
-      [
-        CoreAudio
-        AudioUnit
-        CoreFoundation
-        CoreGraphics
-        CoreMedia
-        IOKit
-        Metal
-        MetalPerformanceShaders
-        Security
-        ScreenCaptureKit
-        SystemConfiguration
-      ]
-    )
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      alsa-lib
-      xorg.libxcb
-    ];
+  buildInputs = [
+    dbus
+    ffmpeg
+    oniguruma
+    openssl
+    sqlite
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    alsa-lib
+    xorg.libxcb
+  ];
 
   buildFeatures = lib.optional stdenv.hostPlatform.isDarwin "metal";
 

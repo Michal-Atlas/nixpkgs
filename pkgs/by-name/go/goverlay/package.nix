@@ -1,38 +1,36 @@
 {
-  lib,
-  stdenv,
-  fetchFromGitHub,
-  bash,
+  autoPatchelfHook,
   coreutils,
+  fetchFromGitHub,
+  fontconfig,
   fpc,
-  git,
   gnugrep,
+  gnused,
   iproute2,
+  kmod,
   lazarus-qt6,
-  libGL,
-  libGLU,
+  lib,
   libnotify,
-  libX11,
-  lsb-release,
+  mangohud,
   nix-update-script,
+  p7zip,
+  pascube,
+  pciutils,
   polkit,
-  procps,
   qt6Packages,
-  systemd,
-  util-linux,
-  vulkan-tools,
-  which,
+  stdenv,
+  wget,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "goverlay";
-  version = "1.2";
+  version = "1.6.1";
 
   src = fetchFromGitHub {
     owner = "benjamimgois";
-    repo = pname;
-    rev = version;
-    sha256 = "sha256-tSpM+XLlFQLfL750LTNWbWFg1O+0fSfsPRXuRCm/KlY=";
+    repo = "goverlay";
+    tag = finalAttrs.version;
+    hash = "sha256-uJdX0Q8SO16U4AuDZWGeEFwVW0m8c4gNeAntWSWLvoU=";
   };
 
   outputs = [
@@ -41,65 +39,63 @@ stdenv.mkDerivation rec {
   ];
 
   postPatch = ''
-    substituteInPlace Makefile \
-      --replace-fail 'prefix = /usr/local' "prefix = $out"
-
-    substituteInPlace overlayunit.pas \
-      --replace-fail '/usr/share/icons/hicolor/128x128/apps/goverlay.png' "$out/share/icons/hicolor/128x128/apps/goverlay.png" \
-      --replace-fail '/sbin/ip' "${lib.getExe' iproute2 "ip"}" \
-      --replace-fail '/bin/bash' "${lib.getExe' bash "bash"}" \
-      --replace-fail '/usr/lib/os-release' '/etc/os-release' \
-      --replace-fail 'lsb_release' "${lib.getExe' lsb-release "lsb_release"} 2> /dev/null"
+    substituteInPlace data/goverlay.sh.in --replace-fail 'mangohud' "${lib.getExe' mangohud "mangohud"}"
   '';
 
   nativeBuildInputs = [
+    autoPatchelfHook
     fpc
     lazarus-qt6
     qt6Packages.wrapQtAppsHook
   ];
 
   buildInputs = [
-    libGL
-    libGLU
     qt6Packages.libqtpas
-    libX11
     qt6Packages.qtbase
   ];
 
-  NIX_LDFLAGS = "-lGLU -lGL -rpath ${lib.makeLibraryPath buildInputs}";
+  installPhase = ''
+    runHook preInstall
+    make prefix=$out install
+    runHook postInstall
+  '';
 
   buildPhase = ''
     runHook preBuild
-    HOME=$(mktemp -d) lazbuild --lazarusdir=${lazarus-qt6}/share/lazarus -B goverlay.lpi
+    HOME=$(mktemp -d) lazbuild --lazarusdir=${lazarus-qt6}/share/lazarus -B goverlay.lpi --bm=Release
     runHook postBuild
   '';
 
-  qtWrapperArgs = [
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        bash
-        coreutils
-        git
-        gnugrep
-        libnotify
-        polkit
-        procps
-        systemd
-        util-linux.bin
-        vulkan-tools
-        which
-      ]
-    }"
-  ];
+  preFixup = ''
+    qtWrapperArgs+=(
+      --suffix PATH : ${
+        lib.makeBinPath [
+          coreutils
+          fontconfig
+          gnugrep
+          gnused
+          iproute2
+          kmod
+          libnotify
+          mangohud
+          p7zip
+          pascube
+          pciutils
+          polkit
+          wget
+        ]
+      })
+  '';
 
   passthru.updateScript = nix-update-script { };
 
-  meta = with lib; {
+  meta = {
     description = "Opensource project that aims to create a Graphical UI to help manage Linux overlays";
     homepage = "https://github.com/benjamimgois/goverlay";
-    license = licenses.gpl3Plus;
-    maintainers = with maintainers; [ RoGreat ];
-    platforms = platforms.linux;
+    changelog = "https://github.com/benjamimgois/goverlay/releases/tag/${finalAttrs.version}";
+    license = lib.licenses.gpl3Plus;
+    maintainers = with lib.maintainers; [ RoGreat ];
     mainProgram = "goverlay";
+    platforms = lib.platforms.linux;
   };
-}
+})

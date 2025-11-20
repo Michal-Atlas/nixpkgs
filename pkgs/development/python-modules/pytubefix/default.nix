@@ -1,5 +1,6 @@
 {
   lib,
+  aiohttp,
   buildPythonPackage,
   fetchFromGitHub,
   setuptools,
@@ -8,17 +9,19 @@
 
 buildPythonPackage rec {
   pname = "pytubefix";
-  version = "8.12.1";
+  version = "9.5.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "JuanBindez";
     repo = "pytubefix";
     tag = "v${version}";
-    hash = "sha256-PZxwF8rAPHmPpw6MKI8OVrl7CRNn9ldPnsPmHlAYahM=";
+    hash = "sha256-r8bzgDQK3csx3Myh90lVnv4Zs3cJq6B+PmpVAUCMRLs=";
   };
 
   build-system = [ setuptools ];
+
+  dependencies = [ aiohttp ];
 
   nativeCheckInputs = [ pytestCheckHook ];
 
@@ -44,7 +47,7 @@ buildPythonPackage rec {
   meta = {
     description = "Pytube fork with additional features and fixes";
     homepage = "https://github.com/JuanBindez/pytubefix";
-    changelog = "https://github.com/JuanBindez/pytubefix/releases/tag/v${version}";
+    changelog = "https://github.com/JuanBindez/pytubefix/releases/tag/${src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ youhaveme9 ];
   };

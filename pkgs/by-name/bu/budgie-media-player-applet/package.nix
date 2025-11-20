@@ -8,17 +8,18 @@
   ninja,
   nix-update-script,
   python3Packages,
+  xfce,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "budgie-media-player-applet";
-  version = "1.1.1";
+  version = "1.2.0";
 
   src = fetchFromGitHub {
     owner = "zalesyc";
     repo = "budgie-media-player-applet";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wmtO4Djs1xXBjimAEV6pvPo7zxDM+XQIOi/WOPRieQ8=";
+    hash = "sha256-FTc/cl4qjVYx45SuZPizOGC09JERIuifCo86+Tqu5hk=";
   };
 
   strictDeps = true;
@@ -31,12 +32,29 @@ stdenv.mkDerivation (finalAttrs: {
     python3Packages.wrapPython
   ];
 
+  # To be passed to budgie-desktop-with-plugins.
+  buildInputs = [
+    glib
+    gtk3
+    xfce.libxfce4windowing
+  ];
+
   pythonPath = with python3Packages; [
     requests
   ];
 
+  mesonFlags = [
+    # The meson option actually enables libpeas2 support
+    # https://github.com/BuddiesOfBudgie/budgie-desktop/issues/749
+    "-Dfor-wayland=true"
+  ];
+
   postPatch = ''
     substituteInPlace meson.build --replace-fail "/usr" "$out"
+
+    # https://github.com/zalesyc/budgie-media-player-applet/issues/25
+    substituteInPlace src/{applet,testWin,Popover,BudgieMediaPlayer}.py \
+      --replace-fail "gi.require_version('Budgie', '1.0')" "gi.require_version('Budgie', '2.0')"
   '';
 
   postFixup = ''
@@ -54,6 +72,6 @@ stdenv.mkDerivation (finalAttrs: {
     changelog = "https://github.com/zalesyc/budgie-media-player-applet/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
-    maintainers = lib.teams.budgie.members;
+    teams = [ lib.teams.budgie ];
   };
 })

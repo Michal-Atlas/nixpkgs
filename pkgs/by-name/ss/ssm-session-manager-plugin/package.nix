@@ -2,7 +2,6 @@
   lib,
   fetchFromGitHub,
   buildGoModule,
-  fetchpatch,
 }:
 buildGoModule rec {
   pname = "ssm-session-manager-plugin";
@@ -75,6 +74,7 @@ buildGoModule rec {
     maintainers = with lib.maintainers; [
       amarshall
       mbaillie
+      ryan4yin
     ];
   };
 }

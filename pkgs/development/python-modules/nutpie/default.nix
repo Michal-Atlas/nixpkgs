@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   buildPythonPackage,
   fetchFromGitHub,
   rustPlatform,
@@ -16,9 +17,12 @@
 
   # tests
   # bridgestan, (not packaged)
+  equinox,
+  flowjax,
   jax,
   jaxlib,
   numba,
+  pytest-timeout,
   pymc,
   pytestCheckHook,
   setuptools,
@@ -27,20 +31,19 @@
 
 buildPythonPackage rec {
   pname = "nutpie";
-  version = "0.13.4";
+  version = "0.15.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pymc-devs";
     repo = "nutpie";
     tag = "v${version}";
-    hash = "sha256-BpKt/EWBefCQUGDxyqF6Xjrj/HUvY4M26gk79R/CyZo=";
+    hash = "sha256-9rcQtEdaafMyuNb/ezcqUmrwXbQFa9hdajGAtANdHOw=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit src;
-    name = "${pname}-${version}";
-    hash = "sha256-d0Qk01YwosHlOy3yb/2PV5Op1Wz+yB5ROVbUWfHooEk=";
+    inherit pname version src;
+    hash = "sha256-6JWBJYGhSNUL8KYiEE2ZBW9xP4CmkCcwwhsO6aOvZyA=";
   };
 
   build-system = [
@@ -66,13 +69,25 @@ buildPythonPackage rec {
 
   nativeCheckInputs = [
     # bridgestan
+    equinox
+    flowjax
     numba
     jax
     jaxlib
     pymc
+    pytest-timeout
     pytestCheckHook
     setuptools
     writableTmpDirAsHomeHook
+  ];
+
+  pytestFlags = [
+    "-v"
+  ];
+
+  disabledTests = lib.optionals (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64) [
+    # flaky (assert np.float64(0.0017554642626285276) > 0.01)
+    "test_normalizing_flow"
   ];
 
   disabledTestPaths = [

@@ -1,18 +1,16 @@
 {
-  stdenv,
   lib,
   fetchFromGitHub,
   rustPlatform,
   nix-update-script,
   pkg-config,
   openssl,
-  darwin,
   rdkafka,
 }:
 
 let
   pname = "rustus";
-  version = "1.1.2";
+  version = "1.1.3";
 in
 rustPlatform.buildRustPackage {
   inherit pname version;
@@ -21,11 +19,10 @@ rustPlatform.buildRustPackage {
     owner = "s3rius";
     repo = "rustus";
     tag = version;
-    hash = "sha256-GgivjhgM1jl6fCNO5tPjtQmQl/me8FxXskZ4laTnkVE=";
+    hash = "sha256-ALnb6ICg+TZRuHayhozwJ5+imabgjBYX4W42ydhkzv0=";
   };
 
-  useFetchCargoVendor = true;
-  cargoHash = "sha256-dDcdGTtwReplQgkvDjZKvQ71tdTvyXaF2vXWgOd6Eio=";
+  cargoHash = "sha256-df92+gp/DtdHwPxJF89zKHjmVWzfrjnD8wAlrPRyyxk=";
 
   env.OPENSSL_NO_VENDOR = 1;
 
@@ -36,14 +33,10 @@ rustPlatform.buildRustPackage {
     pkg-config
   ];
 
-  buildInputs =
-    [
-      openssl
-      rdkafka
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      darwin.apple_sdk.frameworks.Security
-    ];
+  buildInputs = [
+    openssl
+    rdkafka
+  ];
 
   passthru.updateScript = nix-update-script { };
 

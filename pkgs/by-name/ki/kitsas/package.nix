@@ -10,14 +10,19 @@
 
 stdenv.mkDerivation rec {
   pname = "kitsas";
-  version = "5.8";
+  version = "5.9";
 
   src = fetchFromGitHub {
     owner = "artoh";
     repo = "kitupiikki";
     rev = "v${version}";
-    hash = "sha256-w4RttQUzCPqqMwNf0P9lThu4JaLD3yEHm3yPLU1P4KA=";
+    hash = "sha256-4FCfpUFfi+N207SEAKz8nLpVS8MxfmDwM6r6i5pyqEM=";
   };
+
+  patches = [
+    # Fix Qt 6.10 compatibility: QString::arg() no longer accepts Euro type directly
+    ./fix-qt610-euro-arg.patch
+  ];
 
   nativeBuildInputs = [
     pkg-config
@@ -25,17 +30,16 @@ stdenv.mkDerivation rec {
     qt6.wrapQtAppsHook
   ];
 
-  buildInputs =
-    [
-      libzip
-      poppler
-      qt6.qt5compat
-      qt6.qtsvg
-      qt6.qtwebengine
-    ]
-    ++ lib.optional stdenv.hostPlatform.isLinux [
-      qt6.qtwayland
-    ];
+  buildInputs = [
+    libzip
+    poppler
+    qt6.qt5compat
+    qt6.qtsvg
+    qt6.qtwebengine
+  ]
+  ++ lib.optional stdenv.hostPlatform.isLinux [
+    qt6.qtwayland
+  ];
 
   # We use a separate build-dir as otherwise ld seems to get confused between
   # directory and executable name on buildPhase.

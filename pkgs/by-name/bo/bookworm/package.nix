@@ -24,17 +24,17 @@
   unar,
   unzip,
   vala,
-  webkitgtk_4_0,
+  # webkitgtk_4_0,
   wrapGAppsHook3,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "bookworm";
   version = "unstable-2022-01-09";
 
   src = fetchFromGitHub {
     owner = "babluboy";
-    repo = pname;
+    repo = "bookworm";
     rev = "f3df858ce748a6bbc43f03a6e261ff76a6d7d303";
     hash = "sha256-mLyJfblF5WnWBV3rX1ZRupccou4t5mBpo3W7+ECNMVI=";
   };
@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
     poppler
     python3
     sqlite
-    webkitgtk_4_0
+    # webkitgtk_4_0
   ];
 
   postPatch = ''
@@ -92,6 +92,8 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with lib; {
+    # webkitgtk_4_0 was removed
+    broken = true;
     description = "Simple, focused eBook reader";
     mainProgram = "com.github.babluboy.bookworm";
     longDescription = ''

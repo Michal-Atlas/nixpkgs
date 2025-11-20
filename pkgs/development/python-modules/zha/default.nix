@@ -1,22 +1,17 @@
 {
   lib,
-  awesomeversion,
   bellows,
   buildPythonPackage,
   fetchFromGitHub,
   freezegun,
   pyserial,
-  pyserial-asyncio,
   pyserial-asyncio-fast,
-  pytest-asyncio,
+  pytest-asyncio_0,
   pytest-timeout,
   pytest-xdist,
   pytestCheckHook,
-  python-slugify,
   pythonOlder,
   setuptools,
-  universal-silabs-flasher,
-  wheel,
   zha-quirks,
   zigpy,
   zigpy-deconz,
@@ -27,7 +22,7 @@
 
 buildPythonPackage rec {
   pname = "zha";
-  version = "0.0.49";
+  version = "0.0.79";
   pyproject = true;
 
   disabled = pythonOlder "3.12";
@@ -36,7 +31,7 @@ buildPythonPackage rec {
     owner = "zigpy";
     repo = "zha";
     tag = version;
-    hash = "sha256-QW/FrmZIRr2xt+a6Se9nEp4ttfhNJx79/qV9A+hmNSU=";
+    hash = "sha256-rM0Hu/MjMBeQSyZ6HsNmHXZmWFDr3cMi0QoHaL/fKto=";
   };
 
   postPatch = ''
@@ -47,17 +42,12 @@ buildPythonPackage rec {
 
   build-system = [
     setuptools
-    wheel
   ];
 
   dependencies = [
-    awesomeversion
     bellows
     pyserial
-    pyserial-asyncio
     pyserial-asyncio-fast
-    python-slugify
-    universal-silabs-flasher
     zha-quirks
     zigpy
     zigpy-deconz
@@ -68,7 +58,7 @@ buildPythonPackage rec {
 
   nativeCheckInputs = [
     freezegun
-    pytest-asyncio
+    pytest-asyncio_0
     pytest-timeout
     pytest-xdist
     pytestCheckHook

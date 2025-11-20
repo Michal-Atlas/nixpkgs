@@ -7,19 +7,19 @@
 }:
 buildGoModule rec {
   pname = "regolith";
-  version = "1.5.1";
+  version = "1.6.1";
 
   src = fetchFromGitHub {
     owner = "Bedrock-OSS";
     repo = "regolith";
     tag = version;
-    hash = "sha256-gTEQ2hu581tD1I/3iLHzE/2nekAG49/M6V6QeqPhYsA=";
+    hash = "sha256-4STEivb2nlIYE6X0vnO8L4UtFrtmaNS+rxtuE0SwKmA=";
   };
 
   # Requires network access.
   doCheck = false;
 
-  vendorHash = "sha256-+4J4Z7lhbAphi6WUEJN9pzNXf6ROUKqN4NdKI2sQSW0=";
+  vendorHash = "sha256-EWfc4VzVrg1D012dsPqdXoiGpBjpQRYiWNd0wrWlw34=";
 
   ldflags = [
     "-X main.buildSource=nix"

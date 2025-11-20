@@ -11,13 +11,13 @@
 
 buildGoModule rec {
   pname = "docker-credential-helpers";
-  version = "0.9.0";
+  version = "0.9.4";
 
   src = fetchFromGitHub {
     owner = "docker";
-    repo = pname;
+    repo = "docker-credential-helpers";
     rev = "v${version}";
-    sha256 = "sha256-yVtvLbZZJ+mn1qI0Xx0tkGCAoTaAhGQyU/4cJLk9ZWw=";
+    sha256 = "sha256-cDpo3hw0yP9QnFvlGUIpjfMzni57KNkY+S+SIYOKBKQ=";
   };
 
   vendorHash = null;
@@ -47,8 +47,8 @@ buildGoModule rec {
           ];
     in
     ''
-      for cmd in ${builtins.toString cmds}; do
-        go build -ldflags "${builtins.toString ldflags}" -trimpath -o bin/docker-credential-$cmd ./$cmd/cmd
+      for cmd in ${toString cmds}; do
+        go build -ldflags "${toString ldflags}" -trimpath -o bin/docker-credential-$cmd ./$cmd/cmd
       done
     '';
 

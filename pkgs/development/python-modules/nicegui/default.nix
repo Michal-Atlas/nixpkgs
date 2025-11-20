@@ -1,67 +1,63 @@
 {
   lib,
-  buildPythonPackage,
-  fetchFromGitHub,
-
-  # build-system
-  poetry-core,
-  setuptools,
-
-  # dependencies
   aiofiles,
   aiohttp,
+  buildPythonPackage,
   certifi,
   docutils,
   fastapi,
+  fetchFromGitHub,
   httpx,
   ifaddr,
   itsdangerous,
   jinja2,
+  libsass,
   markdown2,
+  matplotlib,
   orjson,
+  pandas,
+  pkgs,
+  plotly,
+  poetry-core,
+  poetry-dynamic-versioning,
+  polars,
+  pyecharts,
   pygments,
+  pytest-asyncio,
+  pytest-selenium,
+  pytestCheckHook,
   python-multipart,
   python-socketio,
+  pywebview,
+  redis,
   requests,
+  setuptools,
   typing-extensions,
   urllib3,
   uvicorn,
   vbuild,
   watchfiles,
-
-  # optional-dependencies
-  matplotlib,
-  pywebview,
-  plotly,
-  libsass,
-  redis,
-
-  # tests
-  pandas,
-  pkgs,
-  polars,
-  pyecharts,
-  pytest-asyncio,
-  pytest-selenium,
-  pytestCheckHook,
   webdriver-manager,
   writableTmpDirAsHomeHook,
 }:
 
 buildPythonPackage rec {
   pname = "nicegui";
-  version = "2.11.1";
+  version = "3.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "zauberzeug";
     repo = "nicegui";
     tag = "v${version}";
-    hash = "sha256-U7S4JQ92H0SYEpMsMw5inioO6ayQ1/NDA7vnvR4i7Mk=";
+    hash = "sha256-otHPWOdTrlmf2VQUOhr3196MhN6ihk97y5sOEmnXuAw=";
   };
+
+  pythonRelaxDeps = [ "requests" ];
 
   build-system = [
     poetry-core
+    poetry-dynamic-versioning
     setuptools
   ];
 
@@ -108,7 +104,8 @@ buildPythonPackage rec {
     pytestCheckHook
     webdriver-manager
     writableTmpDirAsHomeHook
-  ] ++ lib.flatten (builtins.attrValues optional-dependencies);
+  ]
+  ++ lib.flatten (builtins.attrValues optional-dependencies);
 
   pythonImportsCheck = [ "nicegui" ];
 
@@ -118,7 +115,7 @@ buildPythonPackage rec {
   meta = {
     description = "Module to create web-based user interfaces";
     homepage = "https://github.com/zauberzeug/nicegui/";
-    changelog = "https://github.com/zauberzeug/nicegui/releases/tag/v${version}";
+    changelog = "https://github.com/zauberzeug/nicegui/releases/tag/${src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };

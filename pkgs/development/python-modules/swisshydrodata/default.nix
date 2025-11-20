@@ -1,7 +1,10 @@
 {
   lib,
+  aiohttp,
   buildPythonPackage,
   fetchFromGitHub,
+  pytest-asyncio,
+  pytest-cov-stub,
   pytestCheckHook,
   pythonOlder,
   requests-mock,
@@ -25,9 +28,14 @@ buildPythonPackage rec {
 
   build-system = [ setuptools ];
 
-  dependencies = [ requests ];
+  dependencies = [
+    requests
+    aiohttp
+  ];
 
   nativeCheckInputs = [
+    pytest-asyncio
+    pytest-cov-stub
     pytestCheckHook
     requests-mock
   ];

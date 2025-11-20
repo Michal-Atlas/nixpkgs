@@ -2,33 +2,38 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
+  stdenvNoCC,
+
+  # build system
+  hatchling,
+
+  # dependencies
   langgraph-checkpoint,
-  langgraph-sdk,
-  orjson,
+  ormsgpack,
   psycopg,
   psycopg-pool,
-  poetry-core,
-  pythonOlder,
+
+  # testing
   pgvector,
   postgresql,
   postgresqlTestHook,
   pytestCheckHook,
   pytest-asyncio,
-  stdenvNoCC,
+
+  # passthru
+  gitUpdater,
 }:
 
 buildPythonPackage rec {
   pname = "langgraph-checkpoint-postgres";
-  version = "2.0.13";
+  version = "3.0.0";
   pyproject = true;
-
-  disabled = pythonOlder "3.10";
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
     repo = "langgraph";
     tag = "checkpointpostgres==${version}";
-    hash = "sha256-Vz2ZoikEZuMvt3j9tvBIcXCwWSrCV8MI7x9PIHodl8Y=";
+    hash = "sha256-YjO8KfDx7lZOps+dG7CPsY7LOqhKIBdfCXexPsR2pB4=";
   };
 
   postgresqlTestSetupPost = ''
@@ -39,11 +44,11 @@ buildPythonPackage rec {
 
   sourceRoot = "${src.name}/libs/checkpoint-postgres";
 
-  build-system = [ poetry-core ];
+  build-system = [ hatchling ];
 
   dependencies = [
     langgraph-checkpoint
-    orjson
+    ormsgpack
     psycopg
     psycopg-pool
   ];
@@ -58,7 +63,7 @@ buildPythonPackage rec {
   nativeCheckInputs = [
     pytest-asyncio
     pytestCheckHook
-    (postgresql.withPackages (p: with p; [ pgvector ]))
+    (postgresql.withPackages (p: [ pgvector ]))
     postgresqlTestHook
   ];
 
@@ -79,24 +84,27 @@ buildPythonPackage rec {
     "test_vector_search_with_filters"
     "test_vector_search_pagination"
     "test_vector_search_edge_cases"
+    "test_non_ascii"
+    # Flaky under a parallel build (database in use)
+    "test_store_ttl"
   ];
 
   pythonImportsCheck = [ "langgraph.checkpoint.postgres" ];
 
   passthru = {
-    updateScript = langgraph-sdk.updateScript;
-
-    # multiple tags confuse the bulk updater
+    # python updater script sets the wrong tag
     skipBulkUpdate = true;
+    updateScript = gitUpdater {
+      rev-prefix = "checkpointpostgres==";
+    };
   };
 
   meta = {
     description = "Library with a Postgres implementation of LangGraph checkpoint saver";
     homepage = "https://github.com/langchain-ai/langgraph/tree/main/libs/checkpoint-postgres";
-    changelog = "https://github.com/langchain-ai/langgraph/releases/tag/checkpointpostgres==${src.tag}";
+    changelog = "https://github.com/langchain-ai/langgraph/releases/tag/${src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
-      drupol
       sarahec
     ];
   };

@@ -3,48 +3,54 @@
   stdenv,
   fetchFromGitHub,
   rustPlatform,
+  libcosmicAppHook,
   just,
   pkg-config,
-  udev,
   util-linuxMinimal,
   dbus,
   glib,
   libinput,
-  libxkbcommon,
   pulseaudio,
-  wayland,
+  pipewire,
+  udev,
+  xkeyboard_config,
+  nix-update-script,
+  nixosTests,
 }:
 
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "cosmic-applets";
-  version = "1.0.0-alpha.1";
+  version = "1.0.0-beta.6";
 
+  # nixpkgs-update: no auto update
   src = fetchFromGitHub {
     owner = "pop-os";
     repo = "cosmic-applets";
-    rev = "epoch-${version}";
-    hash = "sha256-4KaMG7sKaiJDIlP101/6YDHDwKRqJXHdqotNZlPhv8Q=";
+    tag = "epoch-${finalAttrs.version}";
+    hash = "sha256-eWyFLaBvs/vQCsQgQwLNgATl/wxjtT5545hfi3xZmAg=";
   };
 
-  useFetchCargoVendor = true;
-  cargoHash = "sha256-f5OV//qzWQqIvq8BNtd2H1dWl7aqR0WJwmdimL4wcKQ=";
+  cargoHash = "sha256-XOA5yREoQHGxPI9PVYd2UsaHRCIfbb3Tkr1eovqIIow=";
 
   nativeBuildInputs = [
     just
     pkg-config
     util-linuxMinimal
+    libcosmicAppHook
+    rustPlatform.bindgenHook
   ];
+
   buildInputs = [
     dbus
     glib
     libinput
-    libxkbcommon
     pulseaudio
-    wayland
+    pipewire
     udev
   ];
 
   dontUseJustBuild = true;
+  dontUseJustCheck = true;
 
   justFlags = [
     "--set"
@@ -55,23 +61,37 @@ rustPlatform.buildRustPackage rec {
     "${stdenv.hostPlatform.rust.cargoShortTarget}/release"
   ];
 
-  # Force linking to libwayland-client, which is always dlopen()ed.
-  "CARGO_TARGET_${stdenv.hostPlatform.rust.cargoEnvVarTarget}_RUSTFLAGS" =
-    map (a: "-C link-arg=${a}")
-      [
-        "-Wl,--push-state,--no-as-needed"
-        "-lwayland-client"
-        "-Wl,--pop-state"
-      ];
+  preFixup = ''
+    libcosmicAppWrapperArgs+=(
+      --set-default X11_BASE_RULES_XML ${xkeyboard_config}/share/X11/xkb/rules/base.xml
+      --set-default X11_EXTRA_RULES_XML ${xkeyboard_config}/share/X11/xkb/rules/base.extras.xml
+    )
+  '';
 
-  meta = with lib; {
+  passthru = {
+    tests = {
+      inherit (nixosTests)
+        cosmic
+        cosmic-autologin
+        cosmic-noxwayland
+        cosmic-autologin-noxwayland
+        ;
+    };
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version"
+        "unstable"
+        "--version-regex"
+        "epoch-(.*)"
+      ];
+    };
+  };
+
+  meta = {
     homepage = "https://github.com/pop-os/cosmic-applets";
     description = "Applets for the COSMIC Desktop Environment";
-    license = licenses.gpl3Only;
-    maintainers = with maintainers; [
-      qyliss
-      nyabinary
-    ];
-    platforms = platforms.linux;
+    license = lib.licenses.gpl3Only;
+    teams = [ lib.teams.cosmic ];
+    platforms = lib.platforms.linux;
   };
-}
+})

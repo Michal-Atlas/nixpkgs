@@ -8,16 +8,16 @@
 
 buildGoModule {
   pname = "zoekt";
-  version = "3.7.2-2-unstable-2025-02-17";
+  version = "3.7.2-2-unstable-2025-11-11";
 
   src = fetchFromGitHub {
     owner = "sourcegraph";
     repo = "zoekt";
-    rev = "914a27d7d2e2b489a70e0fc1c6ce64aae8e7964b";
-    hash = "sha256-kUCFAWIyHPzHdhMshrSYSGBIyGD0Nh9HNJRqia5qh/Q=";
+    rev = "46f7ba34aa4ff3c64b9e873fc6f6d8bf01714b06";
+    hash = "sha256-G7yXZB+8YVxw86QMxkG9bYblZClOJwnmu6R2m7eji3U=";
   };
 
-  vendorHash = "sha256-7bpoUxhoVc74bN9/B6TWyufSvDRD90KpIXUMKK+3BcU=";
+  vendorHash = "sha256-urXYBv8+C2jwnr5PjXz7nUyX/Gz4wmtS76UTXFqfQFk=";
 
   nativeCheckInputs = [
     gitMinimal
@@ -39,7 +39,7 @@ buildGoModule {
     description = "Fast trigram based code search";
     homepage = "https://github.com/sourcegraph/zoekt";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ ];
+    maintainers = [ ];
     mainProgram = "zoekt";
   };
 }

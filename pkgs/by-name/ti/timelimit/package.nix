@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitLab {
     owner = "timelimit";
-    repo = pname;
+    repo = "timelimit";
     rev = "release/${version}";
     hash = "sha256-5IEAF8zCKaCVH6BAxjoa/2rrue9pRGBBkFzN57d+g+g=";
   };
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
     homepage = "https://devel.ringlet.net/sysutils/timelimit/";
     license = licenses.bsd2;
     platforms = platforms.all;
-    maintainers = with maintainers; [ figsoda ];
+    maintainers = [ ];
     mainProgram = "timelimit";
   };
 }

@@ -4,26 +4,23 @@
   fetchPypi,
   hatch-vcs,
   hatchling,
-  pythonOlder,
   sphinx,
   pytestCheckHook,
 }:
 
 let
   pname = "sphinx-autodoc-typehints";
-  version = "3.0.1";
+  version = "3.4.0";
 in
 
 buildPythonPackage {
   inherit pname version;
   pyproject = true;
 
-  disabled = pythonOlder "3.7";
-
   src = fetchPypi {
     pname = "sphinx_autodoc_typehints";
     inherit version;
-    hash = "sha256-ubQN0V3uVPb4EMkk+GP5zxxU+fMmXElRQOoBvn9E+lU=";
+    hash = "sha256-oknrcmSdBbS4fUKgykIln1UEmg/xVTk0FGP1nkslasU=";
   };
 
   pythonRelaxDeps = [ "sphinx" ];

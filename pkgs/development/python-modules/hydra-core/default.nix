@@ -1,25 +1,33 @@
 {
   lib,
-  antlr4,
-  antlr4-python3-runtime,
   buildPythonPackage,
   fetchFromGitHub,
+
+  # build-system
+  setuptools,
+
+  # patches
+  replaceVars,
+  antlr4,
   fetchpatch,
-  importlib-resources,
+
+  # nativeBuildInputs
   jre_headless,
+
+  # dependencies
+  antlr4-python3-runtime,
   omegaconf,
   packaging,
-  pytestCheckHook,
-  pythonOlder,
-  replaceVars,
+
+  # tests
+  pytest8_3CheckHook,
+  pythonAtLeast,
 }:
 
 buildPythonPackage rec {
   pname = "hydra-core";
   version = "1.3.2";
-  format = "setuptools";
-
-  disabled = pythonOlder "3.6";
+  pyproject = true;
 
   src = fetchFromGitHub {
     owner = "facebookresearch";
@@ -44,23 +52,28 @@ buildPythonPackage rec {
     # We substitute the path to the jar with the one from our antlr4
     # package, so this file becomes unused
     rm -v build_helpers/bin/antlr*-complete.jar
-
-    sed -i 's/antlr4-python3-runtime==.*/antlr4-python3-runtime/' requirements/requirements.txt
   '';
+
+  build-system = [
+    setuptools
+  ];
 
   nativeBuildInputs = [ jre_headless ];
 
-  propagatedBuildInputs = [
+  pythonRelaxDeps = [
+    "antlr4-python3-runtime"
+  ];
+
+  dependencies = [
     antlr4-python3-runtime
     omegaconf
     packaging
-  ] ++ lib.optionals (pythonOlder "3.9") [ importlib-resources ];
+  ];
 
-  nativeCheckInputs = [ pytestCheckHook ];
+  nativeCheckInputs = [ pytest8_3CheckHook ];
 
-  pytestFlagsArray = [
-    "-W"
-    "ignore::UserWarning"
+  pytestFlags = [
+    "-Wignore::UserWarning"
   ];
 
   # Test environment setup broken under Nix for a few tests:
@@ -70,6 +83,10 @@ buildPythonPackage rec {
     "test_config_search_path"
     # does not raise UserWarning
     "test_initialize_compat_version_base"
+  ]
+  ++ lib.optionals (pythonAtLeast "3.13") [
+    # AssertionError: Regex pattern did not match
+    "test_failure"
   ];
 
   disabledTestPaths = [ "tests/test_hydra.py" ];
@@ -80,10 +97,11 @@ buildPythonPackage rec {
     "hydra.version"
   ];
 
-  meta = with lib; {
+  meta = {
     description = "Framework for configuring complex applications";
     homepage = "https://hydra.cc";
-    license = licenses.mit;
-    maintainers = with maintainers; [ bcdarwin ];
+    changelog = "https://github.com/facebookresearch/hydra/blob/v${version}/NEWS.md";
+    license = lib.licenses.mit;
+    maintainers = with lib.maintainers; [ bcdarwin ];
   };
 }

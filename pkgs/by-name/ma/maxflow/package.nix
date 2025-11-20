@@ -11,10 +11,15 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     owner = "gerddie";
-    repo = pname;
+    repo = "maxflow";
     rev = version;
     hash = "sha256-a84SxGMnfBEaoMEeeIFffTOtErSN5yzZBrAUDjkalGY=";
   };
+
+  patches = [
+    # https://github.com/gerddie/maxflow/pull/7
+    ./0001-Raise-minimum-CMake-version.patch
+  ];
 
   nativeBuildInputs = [ cmake ];
 

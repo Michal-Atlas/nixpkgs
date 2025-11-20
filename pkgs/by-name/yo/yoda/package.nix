@@ -13,13 +13,13 @@
 
 stdenv.mkDerivation rec {
   pname = "yoda";
-  version = "2.0.3";
+  version = "2.1.2";
 
   src = fetchFromGitLab {
     owner = "hepcedar";
-    repo = pname;
+    repo = "yoda";
     rev = "yoda-${version}";
-    hash = "sha256-No2Lr4nmYNfFnJVpg7xYjd35g12CbQtpW9QMjM3owko=";
+    hash = "sha256-cgThoxqPX6dVyGNTLXatW3uQV+41o38fTfkvHXsDs9A=";
   };
 
   nativeBuildInputs = with python3.pkgs; [
@@ -29,13 +29,14 @@ stdenv.mkDerivation rec {
     makeWrapper
   ];
 
-  buildInputs =
-    [ python3 ]
-    ++ (with python3.pkgs; [
-      numpy
-      matplotlib
-    ])
-    ++ lib.optionals withRootSupport [ root ];
+  buildInputs = [
+    python3
+  ]
+  ++ (with python3.pkgs; [
+    numpy
+    matplotlib
+  ])
+  ++ lib.optionals withRootSupport [ root ];
 
   propagatedBuildInputs = [ zlib ];
 

@@ -4,33 +4,53 @@
   rustPlatform,
   protobuf,
   versionCheckHook,
+  cmake,
+  pkg-config,
+  nix-update-script,
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "clash-rs";
-  version = "0.7.4";
+  version = "0.9.2";
 
   src = fetchFromGitHub {
     owner = "Watfaq";
     repo = "clash-rs";
-    tag = "v${version}";
-    hash = "sha256-PaXcMJuenUrcCBdU3CZEIk9U5tZxSAVVtm9ttAldVLM=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-FFbRopIaAOpfb+Wbj+EUXRr89EQE108h8OMn+fpL+ew=";
   };
 
-  useFetchCargoVendor = true;
+  cargoHash = "sha256-JYvITscH1K6xLE6XZpMrEFZWcbue7x7xuPxVQW/Vjb0=";
 
-  cargoHash = "sha256-ynGp1MU0l48mD+gfsyOFNo4jJDiDWgoPLc02WblPjt4=";
+  cargoPatches = [ ./Cargo.patch ];
+
+  patches = [
+    ./unbounded-shifts.patch
+  ];
+
+  postPatch = ''
+    substituteInPlace clash-lib/Cargo.toml \
+      --replace-fail ', git = "https://github.com/smoltcp-rs/smoltcp.git", rev = "ac32e64"' ""
+  '';
+
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    rustPlatform.bindgenHook
+  ];
+
+  nativeInstallCheckInputs = [
+    protobuf
+    versionCheckHook
+  ];
 
   env = {
-    PROTOC = "${protobuf}/bin/protoc";
     # requires features: sync_unsafe_cell, unbounded_shifts, let_chains, ip
     RUSTC_BOOTSTRAP = 1;
+    RUSTFLAGS = "--cfg tokio_unstable";
+    NIX_CFLAGS_COMPILE = "-Wno-error";
   };
 
-  buildFeatures = [
-    "shadowsocks"
-    "tuic"
-    "onion"
-  ];
+  buildFeatures = [ "plus" ];
 
   doCheck = false; # test failed
 
@@ -42,16 +62,19 @@ rustPlatform.buildRustPackage rec {
   doInstallCheck = true;
   versionCheckProgramArg = "--version";
 
-  nativeInstallCheckInputs = [
-    versionCheckHook
-  ];
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version-regex"
+      "^v([0-9.]+)$"
+    ];
+  };
 
   meta = {
     description = "Custom protocol, rule based network proxy software";
     homepage = "https://github.com/Watfaq/clash-rs";
     mainProgram = "clash";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ ];
+    maintainers = with lib.maintainers; [ aaronjheng ];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
-}
+})

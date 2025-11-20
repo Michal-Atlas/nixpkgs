@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     owner = "liberationfonts";
-    repo = pname;
+    repo = "liberation-sans-narrow";
     rev = version;
     sha256 = "1qw554jbdnqkg6pjjl4cqkgsalq3398kzvww2naw30vykcz752bm";
   };
@@ -44,6 +44,5 @@ stdenv.mkDerivation rec {
 
     license = licenses.gpl2;
     homepage = "https://github.com/liberationfonts";
-    maintainers = [ maintainers.leenaars ];
   };
 }

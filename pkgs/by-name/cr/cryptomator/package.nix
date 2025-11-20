@@ -3,7 +3,7 @@
   fetchFromGitHub,
   fuse3,
   glib,
-  jdk23,
+  zulu25,
   lib,
   libayatana-appindicator,
   makeShellWrapper,
@@ -13,22 +13,22 @@
 }:
 
 let
-  jdk = jdk23.override { enableJavaFX = true; };
+  jdk = zulu25.override { enableJavaFX = true; };
 in
 maven.buildMavenPackage rec {
   pname = "cryptomator";
-  version = "1.15.1";
+  version = "1.18.0";
 
   src = fetchFromGitHub {
     owner = "cryptomator";
     repo = "cryptomator";
     tag = version;
-    hash = "sha256-yNCVSaA2GtTFUYoN7IZxEYMxkkQwMiNnfnmSXaruFjM=";
+    hash = "sha256-UWe9iBgb6eBasHnqfBtOFnZlLF1XCIF0y+ebphYQkQw=";
   };
 
   mvnJdk = jdk;
   mvnParameters = "-Dmaven.test.skip=true -Plinux";
-  mvnHash = "sha256-w0mIeSFRSGl3EorrGcxqnXF6C0SowjWUMYT/NN1erwM=";
+  mvnHash = "sha256-dOpvojr6gVtDFE52eghOVZWGspRLQrTDotOMkVGaG9k=";
 
   preBuild = ''
     VERSION=${version}

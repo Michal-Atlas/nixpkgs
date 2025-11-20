@@ -1,58 +1,65 @@
 {
   lib,
+  buildPythonPackage,
+  fetchFromGitHub,
+
+  # build-system
+  setuptools,
+
+  # dependencies
   anyascii,
   beautifulsoup4,
-  buildPythonPackage,
-  callPackage,
   django,
   django-filter,
   django-modelcluster,
+  django-modelsearch,
   django-taggit,
+  django-tasks,
   django-treebeard,
   djangorestframework,
   draftjs-exporter,
-  fetchPypi,
-  html5lib,
-  l18n,
   laces,
   openpyxl,
   permissionedforms,
   pillow,
-  pythonOlder,
   requests,
   telepath,
   willow,
+
+  # tests
+  callPackage,
 }:
 
 buildPythonPackage rec {
   pname = "wagtail";
-  version = "6.3.2";
-  format = "setuptools";
+  version = "7.2";
+  pyproject = true;
 
-  disabled = pythonOlder "3.8";
-
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-5CcSIr0kmAQKYN1eJyKNzUgcwjEKqPyVHw9OI9IPvFA=";
+  src = fetchFromGitHub {
+    owner = "wagtail";
+    repo = "wagtail";
+    tag = "v${version}";
+    hash = "sha256-o/4jn32ffR3BPVNwtFKJ6PowXYi7SpjBqghdeZIl5tM=";
   };
 
-  postPatch = ''
-    substituteInPlace setup.py \
-      --replace "django-filter>=23.3,<24" "django-filter>=23.3,<24.3"
-  '';
+  build-system = [
+    setuptools
+  ];
 
-  propagatedBuildInputs = [
+  pythonRelaxDeps = [ "django-tasks" ];
+
+  dependencies = [
     anyascii
     beautifulsoup4
     django
-    django-treebeard
     django-filter
     django-modelcluster
+    django-modelsearch
     django-taggit
+    django-tasks
+    django-treebeard
     djangorestframework
     draftjs-exporter
-    html5lib
-    l18n
     laces
     openpyxl
     permissionedforms
@@ -60,7 +67,8 @@ buildPythonPackage rec {
     requests
     telepath
     willow
-  ] ++ willow.optional-dependencies.heif;
+  ]
+  ++ willow.optional-dependencies.heif;
 
   # Tests are in separate derivation because they require a package that depends
   # on wagtail (wagtail-factories)
@@ -70,12 +78,12 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [ "wagtail" ];
 
-  meta = with lib; {
+  meta = {
     description = "Django content management system focused on flexibility and user experience";
     mainProgram = "wagtail";
     homepage = "https://github.com/wagtail/wagtail";
     changelog = "https://github.com/wagtail/wagtail/blob/v${version}/CHANGELOG.txt";
-    license = licenses.bsd3;
-    maintainers = with maintainers; [ sephi ];
+    license = lib.licenses.bsd3;
+    maintainers = with lib.maintainers; [ sephi ];
   };
 }

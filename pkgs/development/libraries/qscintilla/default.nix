@@ -1,6 +1,7 @@
 {
-  stdenv,
   lib,
+  stdenv,
+
   fetchurl,
   unzip,
   qtbase,
@@ -9,8 +10,11 @@
   fixDarwinDylibNames,
 }:
 
+let
+  qtVersion = lib.versions.major qtbase.version;
+in
 stdenv.mkDerivation (finalAttrs: {
-  pname = "qscintilla-qt5";
+  pname = "qscintilla-qt${qtVersion}";
   version = "2.14.1";
 
   src = fetchurl {
@@ -27,7 +31,8 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     unzip
     qmake
-  ] ++ lib.optionals stdenv.hostPlatform.isDarwin [ fixDarwinDylibNames ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ fixDarwinDylibNames ];
 
   # Make sure that libqscintilla2.so is available in $out/lib since it is expected
   # by some packages such as sqlitebrowser
@@ -36,7 +41,7 @@ stdenv.mkDerivation (finalAttrs: {
       libExt = stdenv.hostPlatform.extensions.sharedLibrary;
     in
     ''
-      ln -s $out/lib/libqscintilla2_qt5${libExt} $out/lib/libqscintilla2${libExt}
+      ln -s $out/lib/libqscintilla2_qt${qtVersion}${libExt} $out/lib/libqscintilla2${libExt}
     '';
 
   dontWrapQtApps = true;
@@ -70,7 +75,5 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ peterhoeg ];
     platforms = lib.platforms.unix;
-    # ld: library not found for -lcups
-    broken = stdenv.hostPlatform.isDarwin && lib.versionAtLeast qtbase.version "6";
   };
 })

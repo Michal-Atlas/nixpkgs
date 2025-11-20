@@ -7,29 +7,21 @@
   fetchFromGitHub,
   pydantic,
   python-dateutil,
-  pythonOlder,
   setuptools,
   urllib3,
 }:
 
 buildPythonPackage rec {
   pname = "weheat";
-  version = "2025.2.13";
+  version = "2025.6.10";
   pyproject = true;
-
-  disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "wefabricate";
     repo = "wh-python";
     tag = version;
-    hash = "sha256-YXo+pwgCjw2CWUCS9DY9jaLjhj+q+ZqfW3uh1aSXnM0=";
+    hash = "sha256-CBW+LehZPZCHZ2zFeCOWwNAVlGcGdKQ5XgmCOv8jr5Q=";
   };
-
-  pythonRelaxDeps = [
-    "urllib3"
-    "pydantic"
-  ];
 
   build-system = [ setuptools ];
 
@@ -50,6 +42,7 @@ buildPythonPackage rec {
   meta = {
     description = "Library to interact with the weheat API";
     homepage = "https://github.com/wefabricate/wh-python";
+    changelog = "https://github.com/wefabricate/wh-python/releases/tag/${src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };

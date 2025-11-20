@@ -8,13 +8,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "highs";
-  version = "1.9.0";
+  version = "1.12.0";
 
   src = fetchFromGitHub {
     owner = "ERGO-Code";
     repo = "HiGHS";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-VUbYg1NRoRk0IzO6y+NaWnfjOuIYoM8pfPPqJcG7Bbo=";
+    hash = "sha256-FRiYtbl1kWEkHHEIIOpefC9UdusmJKl6UmP3dKRkAXA=";
   };
 
   strictDeps = true;
@@ -40,6 +40,9 @@ stdenv.mkDerivation (finalAttrs: {
     license = licenses.mit;
     platforms = platforms.all;
     mainProgram = "highs";
-    maintainers = with maintainers; [ silky ];
+    maintainers = with maintainers; [
+      galabovaa
+      silky
+    ];
   };
 })

@@ -4,21 +4,18 @@
   fetchPypi,
   pandoc,
   pytestCheckHook,
-  pythonOlder,
   requests,
   setuptools,
 }:
 
 buildPythonPackage rec {
   pname = "publicsuffixlist";
-  version = "1.0.2.20250301";
+  version = "1.0.2.20251119";
   pyproject = true;
-
-  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-M8Od0n1+dnvTq0POrB7J+iztdyxoxy+HJTFL6FvJ6gE=";
+    hash = "sha256-oDVCjz8oIk6PetfQLSl10r1uCW8O995or5bmHdMKy/Q=";
   };
 
   build-system = [ setuptools ];
@@ -32,7 +29,7 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [ "publicsuffixlist" ];
 
-  pytestFlagsArray = [ "publicsuffixlist/test.py" ];
+  enabledTestPaths = [ "publicsuffixlist/test.py" ];
 
   meta = with lib; {
     changelog = "https://github.com/ko-zu/psl/blob/v${version}-gha/CHANGES.md";

@@ -13,20 +13,19 @@
 
 buildPythonPackage rec {
   pname = "ahocorasick-rs";
-  version = "0.22.0";
+  version = "1.0.3";
 
   pyproject = true;
 
   src = fetchPypi {
     inherit version;
     pname = "ahocorasick_rs";
-    hash = "sha256-lzRwODlJlymMSih3CqNIeR+HrUbgVhroM1JuHFfW848=";
+    hash = "sha256-V503Bwp8Idqc2ZiLn7RxKXJztgy0EmWG1tzZn6r8XKU=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit src;
-    name = "${pname}-${version}";
-    hash = "sha256-Oslf85uI3pO9br7s1J9Y9I/UZ5KDOvJZ/30BMudVBZ0=";
+    inherit pname version src;
+    hash = "sha256-RfgjO0qffiAZynQ/xChd81L8S0sqTGdWvpHPrz3bKlQ=";
   };
 
   nativeBuildInputs = with rustPlatform; [
@@ -42,6 +41,8 @@ buildPythonPackage rec {
     pyahocorasick
     hypothesis
   ];
+
+  pytestFlags = [ "--benchmark-disable" ];
 
   pythonImportsCheck = [ "ahocorasick_rs" ];
 

@@ -6,11 +6,11 @@
 }:
 appimageTools.wrapType2 rec {
   pname = "dopamine";
-  version = "3.0.0-preview.37";
+  version = "3.0.0";
 
   src = fetchurl {
     url = "https://github.com/digimezzo/dopamine/releases/download/v${version}/Dopamine-${version}.AppImage";
-    hash = "sha256-QmJRMI7BDnktx4bwcTSs823lDPdwR1trgUpbhG8D8hg=";
+    hash = "sha256-kvXan5J+rxJ/ugcEz9xytq3eQG0saWrYZjF7O1d6rTA=";
   };
 
   extraInstallCommands =
@@ -32,7 +32,10 @@ appimageTools.wrapType2 rec {
     homepage = "https://github.com/digimezzo/dopamine";
     license = lib.licenses.gpl3Only;
     mainProgram = "dopamine";
-    maintainers = with lib.maintainers; [ Guanran928 ];
+    maintainers = with lib.maintainers; [
+      Guanran928
+      ern775
+    ];
     platforms = [ "x86_64-linux" ];
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
   };

@@ -17,13 +17,13 @@
   wcpg,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "flopoco";
   version = "4.1.3";
 
   src = fetchFromGitLab {
-    owner = pname;
-    repo = pname;
+    owner = "flopoco";
+    repo = "flopoco";
     # flopoco-4.1.3 is not tagged on GitLab
     rev = "67598298207c9f3261c35679c8a5966480c4343c";
     hash = "sha256-0jRjg4/qciqBcjsi6BTbKO4VJkcoEzpC98wFkUOIGbI=";
@@ -73,6 +73,10 @@ stdenv.mkDerivation rec {
   postBuild = ''
     ./flopoco BuildAutocomplete
   '';
+
+  cmakeFlags = [
+    (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.5")
+  ];
 
   installPhase = ''
     runHook preInstall

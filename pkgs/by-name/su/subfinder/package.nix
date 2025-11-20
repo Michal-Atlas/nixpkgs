@@ -6,18 +6,16 @@
 
 buildGoModule rec {
   pname = "subfinder";
-  version = "2.7.0";
+  version = "2.10.0";
 
   src = fetchFromGitHub {
     owner = "projectdiscovery";
     repo = "subfinder";
     tag = "v${version}";
-    hash = "sha256-FSEircHSOU/rBdDANrdfPtTUfDn/2A+HtVnVyz7bV0c=";
+    hash = "sha256-bzDBxxTa90L0wbihdT7i06I7EdAi/UA+upwXVrC9K34=";
   };
 
-  vendorHash = "sha256-jr3fBIVLB3ubEsj2pPLy+G/ShGn2OfJQ6bDuY3bbyXY=";
-
-  modRoot = "./v2";
+  vendorHash = "sha256-sqcSkqp5X3ItAXL6///MU5ghJDCnnZFuFh6Kqa/38sA=";
 
   patches = [
     # Disable automatic version check

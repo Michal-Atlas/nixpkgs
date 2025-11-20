@@ -11,12 +11,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromSourcehut {
     owner = "~zethra";
-    repo = pname;
+    repo = "geticons";
     rev = version;
     hash = "sha256-HEnUfOLeRTi2dRRqjDPVwVVHo/GN9wE28x5qv3qOpCY=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-V3e3boIzn76irAfn9fF9MycPRAWorUUSD/CUZhgKv0E=";
   passthru.updateScript = gitUpdater { };
 
@@ -25,6 +24,5 @@ rustPlatform.buildRustPackage rec {
     mainProgram = "geticons";
     homepage = "https://git.sr.ht/~zethra/geticons";
     license = with licenses; [ gpl3Plus ];
-    maintainers = with maintainers; [ Madouura ];
   };
 }

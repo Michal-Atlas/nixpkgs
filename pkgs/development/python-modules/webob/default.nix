@@ -5,7 +5,6 @@
   setuptools,
   legacy-cgi,
   pytestCheckHook,
-  pythonAtLeast,
   pythonOlder,
 
   # for passthru.tests
@@ -16,7 +15,7 @@
 
 buildPythonPackage rec {
   pname = "webob";
-  version = "1.8.8";
+  version = "1.8.9";
   pyproject = true;
 
   disabled = pythonOlder "3.7";
@@ -25,13 +24,13 @@ buildPythonPackage rec {
     owner = "Pylons";
     repo = "webob";
     tag = version;
-    hash = "sha256-QN0UMLzO0g8Oalnn5GlOulXUxtXOx89jeeEvJV53rVs=";
+    hash = "sha256-axJQwlybuqBS6RgI2z9pbw58vHF9aC9AxCg13CIKCLs=";
   };
 
   build-system = [ setuptools ];
 
   # https://github.com/Pylons/webob/issues/437
-  dependencies = lib.optionals (pythonAtLeast "3.13") [ legacy-cgi ];
+  dependencies = [ legacy-cgi ];
 
   nativeCheckInputs = [ pytestCheckHook ];
 

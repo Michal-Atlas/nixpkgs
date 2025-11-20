@@ -9,6 +9,7 @@
   gtk-doc,
   libxslt,
   mpfr,
+  nix-update-script,
   pcre2,
   pkg-config,
   python3Packages,
@@ -60,16 +61,21 @@ stdenv.mkDerivation (finalAttrs: {
   postInstall = ''
     substituteInPlace $out/${python3Packages.python.sitePackages}/bytesize/bytesize.py \
       --replace-fail 'CDLL("libbytesize.so.1")' "CDLL('$out/lib/libbytesize.so.1')"
+
+    # Force compilation of .pyc files to make them deterministic
+    ${python3Packages.python.pythonOnBuildForHost.interpreter} -m compileall $out/${python3Packages.python.sitePackages}/bytesize
   '';
 
   pythonImportsCheck = [ "bytesize" ];
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     homepage = "https://github.com/storaged-project/libbytesize";
     description = "Tiny library providing a C 'class' for working with arbitrary big sizes in bytes";
     license = lib.licenses.lgpl2Plus;
     mainProgram = "bscalc";
-    maintainers = with lib.maintainers; [ ];
+    maintainers = [ lib.maintainers.PlasmaPower ];
     platforms = lib.platforms.linux;
   };
 })

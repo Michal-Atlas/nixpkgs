@@ -14,13 +14,13 @@
   pkg-config,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "ensemble-chorus";
   version = "0-unstable-2019-02-15";
 
   src = fetchFromGitHub {
     owner = "jpcima";
-    repo = pname;
+    repo = "ensemble-chorus";
     rev = "59baeb86b8851f521bc8162e22e3f15061662cc3";
     sha256 = "0c1y10vyhrihcjvxqpqf6b52yk5yhwh813cfp6nla5ax2w88dbhr";
     fetchSubmodules = true;
@@ -46,6 +46,18 @@ stdenv.mkDerivation rec {
     lv2
     libjack2
   ];
+
+  postPatch = ''
+    substituteInPlace CMakeLists.txt --replace-fail \
+      'cmake_minimum_required(VERSION "3.3")' \
+      'cmake_minimum_required(VERSION 4.0)'
+    substituteInPlace thirdparty/gsl-lite/CMakeLists.txt --replace-fail \
+      'cmake_minimum_required( VERSION 3.0 FATAL_ERROR )' \
+      'cmake_minimum_required(VERSION 4.0)'
+    substituteInPlace thirdparty/jsl/CMakeLists.txt --replace-fail \
+      'cmake_minimum_required(VERSION 3.3)' \
+      'cmake_minimum_required(VERSION 4.0)'
+  '';
 
   meta = with lib; {
     homepage = "https://github.com/jpcima/ensemble-chorus";

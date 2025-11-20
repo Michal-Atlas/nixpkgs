@@ -1,4 +1,5 @@
 {
+  dri-pkgconfig-stub,
   egl-wayland,
   bash,
   libepoxy,
@@ -6,6 +7,7 @@
   fontutil,
   lib,
   libdecor,
+  libgbm,
   libei,
   libGL,
   libGLU,
@@ -30,7 +32,7 @@
   libxkbfile,
   libxshmfence,
   libxcvt,
-  mesa,
+  mesa-gl-headers,
   meson,
   ninja,
   openssl,
@@ -52,11 +54,11 @@
 
 stdenv.mkDerivation rec {
   pname = "xwayland";
-  version = "24.1.6";
+  version = "24.1.9";
 
   src = fetchurl {
     url = "mirror://xorg/individual/xserver/${pname}-${version}.tar.xz";
-    hash = "sha256-c35hLKNrvfQVqRFkTrdZLPk4mEaEe0f6RtxwW9dU0tc=";
+    hash = "sha256-8pevJ6hFCNubgNHLvMacOAHaOOtkxy87W1D1gkWa/dA=";
   };
 
   postPatch = ''
@@ -73,47 +75,48 @@ stdenv.mkDerivation rec {
     ninja
     wayland-scanner
   ];
-  buildInputs =
-    [
-      egl-wayland
-      libdecor
-      libepoxy
-      libei
-      fontutil
-      libGL
-      libGLU
-      libX11
-      libXau
-      libXaw
-      libXdmcp
-      libXext
-      libXfixes
-      libXfont2
-      libXmu
-      libXpm
-      libXrender
-      libXres
-      libXt
-      libdrm
-      libtirpc
-      libxcb
-      libxkbfile
-      libxshmfence
-      libxcvt
-      mesa # uses dri_interface.h
-      openssl
-      pixman
-      systemd
-      wayland
-      wayland-protocols
-      xkbcomp
-      xorgproto
-      xtrans
-      zlib
-    ]
-    ++ lib.optionals withLibunwind [
-      libunwind
-    ];
+  buildInputs = [
+    dri-pkgconfig-stub
+    egl-wayland
+    libdecor
+    libgbm
+    libepoxy
+    libei
+    fontutil
+    libGL
+    libGLU
+    libX11
+    libXau
+    libXaw
+    libXdmcp
+    libXext
+    libXfixes
+    libXfont2
+    libXmu
+    libXpm
+    libXrender
+    libXres
+    libXt
+    libdrm
+    libtirpc
+    libxcb
+    libxkbfile
+    libxshmfence
+    libxcvt
+    mesa-gl-headers
+    openssl
+    pixman
+    systemd
+    wayland
+    wayland-protocols
+    xkbcomp
+    xorgproto
+    xtrans
+    zlib
+  ]
+  ++ lib.optionals withLibunwind [
+    libunwind
+  ];
   mesonFlags = [
     (lib.mesonBool "xcsecurity" true)
     (lib.mesonOption "default_font_path" defaultFontPath)

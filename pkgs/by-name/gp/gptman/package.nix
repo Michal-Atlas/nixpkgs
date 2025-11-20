@@ -14,12 +14,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "rust-disk-partition-management";
-    repo = pname;
+    repo = "gptman";
     rev = "v${version}";
     hash = "sha256-ebV61EilGggix6JSN/MW4Ka0itkSpvikLDSO005TTYY=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-v27tKdBPrtRwpNZRjyv8N7BpxOz6ZgFHaa5pe51YrTI=";
 
   buildInputs = lib.optional stdenv.hostPlatform.isDarwin libiconv;

@@ -12,10 +12,14 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     owner = "maxscheurer";
-    repo = pname;
+    repo = "cppe";
     rev = "v${version}";
     sha256 = "sha256-guM7+ZWDJLcAUJtPkKLvC4LYSA2eBvER7cgwPZ7FxHw=";
   };
+
+  patches = [
+    ./cmake-minimum-required.patch
+  ];
 
   nativeBuildInputs = [ cmake ] ++ lib.optionals stdenv.cc.isClang [ llvmPackages.openmp ];
 

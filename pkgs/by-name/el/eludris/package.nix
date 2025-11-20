@@ -12,12 +12,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "eludris";
-    repo = pname;
+    repo = "eludris";
     rev = "v${version}";
     hash = "sha256-TVYgimkGUSITB3IaMlMd10PWomqyJRvONvJwiW85U4M=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-JpXjnkZHz12YxgTSqTcWdQTkrMugP7ZGw48145BeBZk=";
 
   cargoBuildFlags = [ "-p eludris" ];

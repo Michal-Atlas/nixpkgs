@@ -2,10 +2,10 @@
   lib,
   stdenv,
   buildPythonPackage,
-  pythonOlder,
-  fetchPypi,
+  fetchFromGitHub,
 
   # build-system
+  setuptools,
   setuptools-scm,
 
   # dependencies
@@ -18,7 +18,7 @@
   radio-beam,
   tqdm,
 
-  # checks
+  # tests
   aplpy,
   pytest-astropy,
   pytestCheckHook,
@@ -26,16 +26,20 @@
 
 buildPythonPackage rec {
   pname = "spectral-cube";
-  version = "0.6.6";
+  version = "0.6.7";
   pyproject = true;
 
-  src = fetchPypi {
-    pname = "spectral_cube";
-    inherit version;
-    hash = "sha256-bjBghr5WrfC4NH5cyiy9RUiCmJSUHBtyD61bd1i/4kM=";
+  src = fetchFromGitHub {
+    owner = "radio-astro-tools";
+    repo = "spectral-cube";
+    tag = "v${version}";
+    hash = "sha256-l5r7oeWr/JrmGOmUo4po2VlGldh8y7E3ufd+Gw1/JmM=";
   };
 
-  build-system = [ setuptools-scm ];
+  build-system = [
+    setuptools
+    setuptools-scm
+  ];
 
   dependencies = [
     astropy
@@ -46,7 +50,8 @@ buildPythonPackage rec {
     packaging
     radio-beam
     tqdm
-  ] ++ dask.optional-dependencies.array;
+  ]
+  ++ dask.optional-dependencies.array;
 
   nativeCheckInputs = [
     aplpy
@@ -59,9 +64,14 @@ buildPythonPackage rec {
     cd build/lib
   '';
 
-  # On x86_darwin, this test fails with "Fatal Python error: Aborted"
-  # when sandbox = true.
+  disabledTests = lib.optionals stdenv.hostPlatform.isDarwin [
+    # Flaky: AssertionError: assert diffvals.max()*u.B <= 1*u.MB
+    "test_reproject_3D_memory"
+  ];
+
   disabledTestPaths = lib.optionals stdenv.hostPlatform.isDarwin [
+    # On x86_darwin, this test fails with "Fatal Python error: Aborted"
+    # when sandbox = true.
     "spectral_cube/tests/test_visualization.py"
   ];
 

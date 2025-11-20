@@ -11,23 +11,25 @@
   pytest-codspeed,
   pytest-cov-stub,
   python,
-  pythonOlder,
   setuptools,
 }:
 
 buildPythonPackage rec {
   pname = "dbus-fast";
-  version = "2.33.0";
+  version = "2.46.3";
   pyproject = true;
-
-  disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "Bluetooth-Devices";
     repo = "dbus-fast";
     tag = "v${version}";
-    hash = "sha256-U6NAEhoEcphAuvaAA2en4Ka4yFHiKPINl5CvtxE7FaI=";
+    hash = "sha256-Z/TuYRpmMTU86pJAFDY2J9RG4YfsDcOJsl+71yEVgSI=";
   };
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "Cython>=3,<3.3.0" Cython
+  '';
 
   # The project can build both an optimized cython version and an unoptimized
   # python version. This ensures we fail if we build the wrong one.

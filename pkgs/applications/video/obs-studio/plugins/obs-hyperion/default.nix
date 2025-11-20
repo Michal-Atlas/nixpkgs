@@ -43,6 +43,8 @@ stdenv.mkDerivation rec {
     "-DUSE_SYSTEM_FLATBUFFERS_LIBS=ON"
   ];
 
+  NIX_CFLAGS_COMPILE = [ "-Wno-error" ];
+
   preConfigure = ''
     rm -rf external/flatbuffers
   '';
@@ -52,6 +54,6 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/hyperion-project/hyperion-obs-plugin";
     license = licenses.mit;
     maintainers = with maintainers; [ algram ];
-    platforms = [ "x86_64-linux" ];
+    inherit (obs-studio.meta) platforms;
   };
 }

@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "Serial-Studio";
     repo = "Serial-Studio";
-    rev = "v${version}";
+    tag = "v${version}";
     hash = "sha256-q3RWy3HRs5NG0skFb7PSv8jK5pI5rtbccP8j38l8kjM=";
     fetchSubmodules = true;
   };
@@ -42,12 +42,18 @@ stdenv.mkDerivation rec {
     ./0002-Connect-Button-Fix.patch
   ];
 
-  meta = with lib; {
+  postInstall = lib.optionalString stdenv.hostPlatform.isDarwin ''
+    mkdir -p $out/{Applications,bin}
+    mv $out/Serial-Studio.app $out/Applications
+    makeWrapper $out/Applications/Serial-Studio.app/Contents/MacOS/Serial-Studio $out/bin/serial-studio
+  '';
+
+  meta = {
     description = "Multi-purpose serial data visualization & processing program";
     mainProgram = "serial-studio";
     homepage = "https://serial-studio.github.io/";
-    license = licenses.mit;
-    maintainers = with maintainers; [ sikmir ];
-    platforms = platforms.linux;
+    license = lib.licenses.mit;
+    maintainers = with lib.maintainers; [ sikmir ];
+    platforms = lib.platforms.unix;
   };
 }

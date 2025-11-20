@@ -14,6 +14,7 @@
   setuptools,
   six,
   fetchpatch2,
+  legacy-cgi,
 }:
 
 buildPythonPackage rec {
@@ -49,11 +50,13 @@ buildPythonPackage rec {
   dependencies = [
     chardet
     distutils # src/wfuzz/plugin_api/base.py
+    legacy-cgi
     pycurl
     six
     setuptools
     pyparsing
-  ] ++ lib.optionals stdenv.hostPlatform.isWindows [ colorama ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isWindows [ colorama ];
 
   nativeCheckInputs = [
     netaddr

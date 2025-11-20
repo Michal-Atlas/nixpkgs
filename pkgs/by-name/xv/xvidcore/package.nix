@@ -17,21 +17,25 @@ stdenv.mkDerivation rec {
     sha256 = "1xyg3amgg27zf7188kss7y248s0xhh1vv8rrk0j9bcsd5nasxsmf";
   };
 
-  preConfigure =
-    ''
-      # Configure script is not in the root of the source directory
-      cd build/generic
-    ''
-    + lib.optionalString stdenv.hostPlatform.isDarwin ''
-      # Undocumented darwin hack
-      substituteInPlace configure --replace "-no-cpp-precomp" ""
-    '';
+  preConfigure = ''
+    # Configure script is not in the root of the source directory
+    cd build/generic
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    # Undocumented darwin hack
+    substituteInPlace configure --replace "-no-cpp-precomp" ""
+  '';
 
   configureFlags =
     [ ]
     # Undocumented darwin hack (assembly is probably disabled due to an
     # issue with nasm, however yasm is now used)
-    ++ lib.optional stdenv.hostPlatform.isDarwin "--enable-macosx_module --disable-assembly";
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      "--enable-macosx_module"
+    ]
+    ++ lib.optionals (stdenv.hostPlatform.isDarwin || stdenv.hostPlatform.isFreeBSD) [
+      "--disable-assembly"
+    ];
 
   nativeBuildInputs = [ ] ++ lib.optional (!stdenv.hostPlatform.isDarwin) yasm;
 

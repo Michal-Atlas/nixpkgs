@@ -20,14 +20,14 @@ let
 in
 python.pkgs.buildPythonApplication rec {
   pname = "borgbackup";
-  version = "1.4.0";
+  version = "1.4.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "borgbackup";
     repo = "borg";
     tag = version;
-    hash = "sha256-n1hCM7Sp0t2bOJEzErEd1PS/Xc7c+KDmJ4PjQuuF140=";
+    hash = "sha256-KoOulgOkMgnkN3I0Gw9z0YKZvqvPJ0A9sIAxRLOlchU=";
   };
 
   postPatch = ''
@@ -45,6 +45,7 @@ python.pkgs.buildPythonApplication rec {
   nativeBuildInputs = with python.pkgs; [
     # docs
     sphinxHook
+    sphinxcontrib-jquery
     guzzle-sphinx-theme
 
     # shell completions
@@ -56,17 +57,16 @@ python.pkgs.buildPythonApplication rec {
     "man"
   ];
 
-  buildInputs =
-    [
-      libb2
-      lz4
-      xxHash
-      zstd
-      openssl
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      acl
-    ];
+  buildInputs = [
+    libb2
+    lz4
+    xxHash
+    zstd
+    openssl
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    acl
+  ];
 
   dependencies = with python.pkgs; [
     msgpack
@@ -77,6 +77,13 @@ python.pkgs.buildPythonApplication rec {
   makeWrapperArgs = [
     ''--prefix PATH ':' "${openssh}/bin"''
   ];
+
+  preInstallSphinx = ''
+    # remove invalid outputs for manpages
+    rm .sphinx/man/man/_static/jquery.js
+    rm .sphinx/man/man/_static/_sphinx_javascript_frameworks_compat.js
+    rmdir .sphinx/man/man/_static/
+  '';
 
   postInstall = ''
     installShellCompletion --cmd borg \
@@ -93,7 +100,7 @@ python.pkgs.buildPythonApplication rec {
     pytestCheckHook
   ];
 
-  pytestFlagsArray = [
+  pytestFlags = [
     "--benchmark-skip"
     "--pyargs"
     "borg.testsuite"
@@ -113,8 +120,11 @@ python.pkgs.buildPythonApplication rec {
     "test_get_keys_dir"
     "test_get_security_dir"
     "test_get_config_dir"
-    # https://github.com/borgbackup/borg/issues/6573
-    "test_basic_functionality"
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    # Tests create files with append-only flags that cause cleanup issues on macOS
+    "test_extract_restores_append_flag"
+    "test_file_status_excluded"
   ];
 
   preCheck = ''

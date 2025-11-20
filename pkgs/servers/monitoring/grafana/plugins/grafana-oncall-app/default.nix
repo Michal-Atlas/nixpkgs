@@ -2,12 +2,12 @@
 
 grafanaPlugin {
   pname = "grafana-oncall-app";
-  version = "1.10.2";
-  zipHash = "sha256-wRgzdPKSA24O4kSDhaO/09uOG6lIoJGWUGOgX1vdjlU=";
+  version = "1.16.6";
+  zipHash = "sha256-n5V3CkTLXKKmyz12/UbYWIksSC9+EBj3/V4y+H5jyUE=";
   meta = with lib; {
     description = "Developer-friendly incident response for Grafana";
     license = licenses.agpl3Only;
-    maintainers = lib.teams.fslabs.members;
+    teams = [ lib.teams.fslabs ];
     platforms = platforms.unix;
   };
 }

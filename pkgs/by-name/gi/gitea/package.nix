@@ -9,44 +9,54 @@
   compressDrvWeb,
   gitea,
   gzip,
+  nodejs,
   openssh,
+  pnpm,
+  stdenv,
   sqliteSupport ? true,
   nixosTests,
-  buildNpmPackage,
 }:
 
 let
-  frontend = buildNpmPackage {
+  frontend = stdenv.mkDerivation (finalAttrs: {
     pname = "gitea-frontend";
     inherit (gitea) src version;
 
-    npmDepsHash = "sha256-5i3aB1QgH5NK5yDZySFlraVGU+Kh6J4Y2zvFqJX5kJs=";
+    pnpmDeps = pnpm.fetchDeps {
+      inherit (finalAttrs) pname version src;
+      fetcherVersion = 2;
+      hash = "sha256-0p7P68BvO3hv0utUbnPpHSpGLlV7F9HHmOITvJAb/ww=";
+    };
 
-    # use webpack directly instead of 'make frontend' as the packages are already installed
+    nativeBuildInputs = [
+      nodejs
+      pnpm.configHook
+    ];
+
     buildPhase = ''
-      BROWSERSLIST_IGNORE_OLD_DATA=true npx webpack
+      make frontend
     '';
 
     installPhase = ''
       mkdir -p $out
       cp -R public $out/
     '';
-  };
+  });
 in
 buildGoModule rec {
   pname = "gitea";
-  version = "1.23.4";
+  version = "1.25.1";
 
   src = fetchFromGitHub {
     owner = "go-gitea";
     repo = "gitea";
     tag = "v${gitea.version}";
-    hash = "sha256-gcz3R3AcOOujpI++oF8MBGGnCjDbl5mXuvGpVNHS92g=";
+    hash = "sha256-JTkpjUXCz+0Y8EY7JlDT4tLbCjDYElZ4uG1oLmij8Iw=";
   };
 
   proxyVendor = true;
 
-  vendorHash = "sha256-nkg9uHAUqPJWWap0cTmDokcl2L2hT/b9I1+rNnA8bD0=";
+  vendorHash = "sha256-HHW7xgXJKnzj6HLKAUXKYIZgOKKbXVSK+YGSKCwBeLU=";
 
   outputs = [
     "out"

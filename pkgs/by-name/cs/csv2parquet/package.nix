@@ -10,12 +10,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "domoritz";
-    repo = pname;
+    repo = "csv2parquet";
     rev = "v${version}";
     sha256 = "sha256-499DC0kLvvP5Oq2WYRb9BIppTdfm41u8hwrPU8b66Zw=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-hZ4qdaR3dvcBBvZqfMQVk4hryhxfeAszv56WPNVhQiY=";
 
   meta = with lib; {

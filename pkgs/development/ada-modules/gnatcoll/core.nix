@@ -1,17 +1,18 @@
-{ stdenv
-, lib
-, gnat
-, gprbuild
-, fetchFromGitHub
-, fetchpatch2
-, which
-, python3
-, rsync
-, enableGnatcollCore ? true
+{
+  stdenv,
+  lib,
+  gnat,
+  gprbuild,
+  fetchFromGitHub,
+  fetchpatch2,
+  which,
+  python3,
+  rsync,
+  enableGnatcollCore ? true,
   # TODO(@sternenseemann): figure out a way to split this up into three packages
-, enableGnatcollProjects ? true
+  enableGnatcollProjects ? true,
   # for tests
-, gnatcoll-core
+  gnatcoll-core,
 }:
 
 # gnatcoll-projects depends on gnatcoll-core
@@ -62,8 +63,8 @@ stdenv.mkDerivation rec {
     "PROCESSORS=$(NIX_BUILD_CORES)"
     # confusingly, for gprbuild --target is autoconf --host
     "TARGET=${stdenv.hostPlatform.config}"
-    "GNATCOLL_MINIMAL_ONLY=${if !enableGnatcollCore then "yes" else "no"}"
-    "GNATCOLL_PROJECTS=${if enableGnatcollProjects then "yes" else "no"}"
+    "GNATCOLL_MINIMAL_ONLY=${lib.boolToYesNo (!enableGnatcollCore)}"
+    "GNATCOLL_PROJECTS=${lib.boolToYesNo enableGnatcollProjects}"
   ];
 
   passthru.tests = {

@@ -3,23 +3,23 @@
   buildPythonPackage,
   callPackage,
   fetchFromGitHub,
-  pytest,
   pythonOlder,
+  pytest,
   setuptools-scm,
+  backports-asyncio-runner,
+  typing-extensions,
 }:
 
 buildPythonPackage rec {
   pname = "pytest-asyncio";
-  version = "0.25.2"; # N.B.: when updating, tests bleak and aioesphomeapi tests
+  version = "1.2.0"; # N.B.: when updating, tests bleak and aioesphomeapi tests
   pyproject = true;
-
-  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "pytest-dev";
     repo = "pytest-asyncio";
     tag = "v${version}";
-    hash = "sha256-GLKcqf6NXCMNU/lVLQP8s/FDC1OcpPF1RxzKDItJSiU=";
+    hash = "sha256-27FCV7zgFGe/Q0fkYyh5Z05foVGhbKBRPTH4UK/tW5A=";
   };
 
   outputs = [
@@ -30,6 +30,13 @@ buildPythonPackage rec {
   build-system = [ setuptools-scm ];
 
   buildInputs = [ pytest ];
+
+  dependencies = [
+    backports-asyncio-runner
+  ]
+  ++ lib.optionals (pythonOlder "3.13") [
+    typing-extensions
+  ];
 
   postInstall = ''
     mkdir $testout

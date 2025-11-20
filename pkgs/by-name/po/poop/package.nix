@@ -2,7 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  zig,
+  zig_0_13,
 }:
 
 stdenv.mkDerivation rec {
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [
-    zig.hook
+    zig_0_13.hook
   ];
 
   meta = with lib; {
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/andrewrk/poop";
     changelog = "https://github.com/andrewrk/poop/releases/tag/${src.rev}";
     license = licenses.mit;
-    maintainers = with maintainers; [ figsoda ];
+    maintainers = [ ];
     platforms = platforms.linux;
     mainProgram = "poop";
   };

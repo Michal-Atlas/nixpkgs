@@ -17,7 +17,7 @@
   python3,
   jansson,
   curl,
-  fmt,
+  fmt_11,
   nlohmann_json,
   yara,
   rsync,
@@ -27,8 +27,8 @@
 }:
 
 let
-  version = "1.37.1";
-  patterns_version = "1.37.1";
+  version = "1.37.4";
+  patterns_version = "1.37.4";
 
   patterns_src = fetchFromGitHub {
     name = "ImHex-Patterns-source-${patterns_version}";
@@ -49,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "WerWolv";
     repo = "ImHex";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-0vfetOUYQmi3FNWI8+QkBHJe2Crg4LNrKeT1vSTdsjM=";
+    hash = "sha256-uenwAaIjtBzrtiLdy6fh5TxtbWtUJbtybNOLP3+8blA=";
   };
 
   strictDeps = true;
@@ -62,14 +62,15 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config
     rsync
     makeWrapper
-  ] ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
 
   buildInputs = [
     capstone
     curl
     dbus
     file
-    fmt
+    fmt_11
     glfw3
     gtk3
     jansson
@@ -97,7 +98,10 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeBool "USE_SYSTEM_LLVM" true)
     (lib.cmakeBool "USE_SYSTEM_NLOHMANN_JSON" true)
     (lib.cmakeBool "USE_SYSTEM_YARA" true)
+    (lib.cmakeFeature "CMAKE_POLICY_VERSION_MINIMUM" "3.5")
   ];
+
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=deprecated-declarations";
 
   # Comment out fixup_bundle in PostprocessBundle.cmake as we are not building a standalone application
   postPatch = lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -138,6 +142,7 @@ stdenv.mkDerivation (finalAttrs: {
       kashw2
       cafkafk
       govanify
+      ryand56
     ];
     platforms = with lib.platforms; linux ++ darwin;
   };

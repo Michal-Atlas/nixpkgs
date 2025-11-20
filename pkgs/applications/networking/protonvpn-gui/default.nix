@@ -5,6 +5,7 @@
   gobject-introspection,
   setuptools,
   wrapGAppsHook3,
+  libnotify,
   dbus-python,
   packaging,
   proton-core,
@@ -21,14 +22,14 @@
 
 buildPythonApplication rec {
   pname = "protonvpn-gui";
-  version = "4.8.2";
+  version = "4.12.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ProtonVPN";
     repo = "proton-vpn-gtk-app";
     tag = "v${version}";
-    hash = "sha256-kNWwrNpXCkAPvXXqv8HwOx0msYEVsO0JgrtG3wUVmQ4=";
+    hash = "sha256-pDTzqTiGAisVEHwez526z9C9GzNkMWl6Cui8E6siIXo=";
   };
 
   nativeBuildInputs = [
@@ -37,7 +38,10 @@ buildPythonApplication rec {
     wrapGAppsHook3
   ];
 
-  buildInputs = lib.optionals withIndicator [
+  buildInputs = [
+    libnotify # gir typelib is used
+  ]
+  ++ lib.optionals withIndicator [
     # Adds AppIndicator3 namespace
     libappindicator-gtk3
     # Adds AyatanaAppIndicator3 namespace
@@ -62,7 +66,10 @@ buildPythonApplication rec {
 
   postInstall = ''
     mkdir -p $out/share/{applications,pixmaps}
-    install -Dm 644 ${src}/rpmbuild/SOURCES/protonvpn-app.desktop $out/share/applications
+
+    # Fix the desktop file to correctly identify the wrapped app and show the icon during runtime
+    substitute ${src}/rpmbuild/SOURCES/proton.vpn.app.gtk.desktop $out/share/applications/proton.vpn.app.gtk.desktop \
+      --replace-fail "StartupWMClass=protonvpn-app" "StartupWMClass=.protonvpn-app-wrapped"
     install -Dm 644 ${src}/rpmbuild/SOURCES/proton-vpn-logo.svg $out/share/pixmaps
   '';
 

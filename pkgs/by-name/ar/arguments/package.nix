@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     inherit owner;
-    repo = pname;
+    repo = "arguments";
     rev = "b3aad97f6b6892cb8733455d0d448649a48fa108";
     sha256 = "1ar8lm1w1jflz3vdmjr5c4x6y7rscvrj78b8gmrv79y95qrgzv6s";
   };
@@ -25,8 +25,13 @@ stdenv.mkDerivation rec {
   doCheck = false;
   # internal_volume_io.h: No such file or directory
 
+  postPatch = ''
+    substituteInPlace CMakeLists.txt \
+      --replace-fail "CMAKE_MINIMUM_REQUIRED(VERSION 2.6)" "cmake_minimum_required(VERSION 3.10)"
+  '';
+
   meta = with lib; {
-    homepage = "https://github.com/${owner}/${pname}";
+    homepage = "https://github.com/${owner}/arguments";
     description = "Library for argument handling for MINC programs";
     maintainers = with maintainers; [ bcdarwin ];
     platforms = platforms.unix;

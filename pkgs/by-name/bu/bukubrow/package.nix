@@ -20,12 +20,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "SamHH";
-    repo = pname;
+    repo = "bukubrow-host";
     rev = "v${version}";
     sha256 = "sha256-xz5Agsm+ATQXXgpPGN4EQ00i1t8qUlrviNHauVdCu4U=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-mCPJE9WW14NtahbMnDcE+0xXl5w25dzerPy3wv78l20=";
 
   buildInputs = [ sqlite ];

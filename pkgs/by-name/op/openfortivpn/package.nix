@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
 
   src = fetchFromGitHub {
     owner = "adrienverge";
-    repo = pname;
+    repo = "openfortivpn";
     tag = "v${version}";
     hash = "sha256-Pv9v7e5xPTIrgqldBDtTFxW+aIjbxSeu0sQ9n6HjO9w=";
   };
@@ -35,28 +35,26 @@ stdenv.mkDerivation rec {
     pkg-config
   ];
 
-  buildInputs =
-    [
-      openssl
-    ]
-    ++ lib.optional withSystemd systemd
-    ++ lib.optional withPpp ppp;
+  buildInputs = [
+    openssl
+  ]
+  ++ lib.optional withSystemd systemd
+  ++ lib.optional withPpp ppp;
 
-  configureFlags =
-    [
-      "--sysconfdir=/etc"
-    ]
-    ++ lib.optional withSystemd "--with-systemdsystemunitdir=${placeholder "out"}/lib/systemd/system"
-    ++ lib.optional withPpp "--with-pppd=${ppp}/bin/pppd"
-    # configure: error: cannot check for file existence when cross compiling
-    ++ lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) "--disable-proc";
+  configureFlags = [
+    "--sysconfdir=/etc"
+  ]
+  ++ lib.optional withSystemd "--with-systemdsystemunitdir=${placeholder "out"}/lib/systemd/system"
+  ++ lib.optional withPpp "--with-pppd=${ppp}/bin/pppd"
+  # configure: error: cannot check for file existence when cross compiling
+  ++ lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) "--disable-proc";
 
   enableParallelBuilding = true;
 
   nativeInstallCheckInputs = [
     versionCheckHook
   ];
-  versionCheckProgramArg = [ "--version" ];
+  versionCheckProgramArg = "--version";
   doInstallCheck = true;
 
   passthru = {

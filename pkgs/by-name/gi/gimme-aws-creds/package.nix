@@ -2,7 +2,6 @@
   lib,
   installShellFiles,
   python3,
-  fetchPypi,
   fetchFromGitHub,
   nix-update-script,
   testers,
@@ -21,7 +20,7 @@ python3.pkgs.buildPythonApplication rec {
     hash = "sha256-fsFYcfbLeYV6tpOGgNrFmYjcUAmdsx5zwUbvcctwFVs=";
   };
 
-  nativeBuildInputs = with python3.pkgs; [
+  nativeBuildInputs = [
     installShellFiles
   ];
 

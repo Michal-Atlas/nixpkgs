@@ -1,28 +1,29 @@
 {
+  cmake,
+  fetchFromGitLab,
   lib,
-  stdenv,
-  fetchFromGitHub,
   qtbase,
   qtsvg,
-  qtwayland,
-  qmake,
   qttools,
+  qtwayland,
+  stdenv,
   wrapQtAppsHook,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "qt6ct";
-  version = "0.10";
+  version = "0.11";
 
-  src = fetchFromGitHub {
-    owner = "ilya-fedin";
+  src = fetchFromGitLab {
+    domain = "www.opencode.net";
+    owner = "trialuser";
     repo = "qt6ct";
     tag = finalAttrs.version;
-    hash = "sha256-ePY+BEpEcAq11+pUMjQ4XG358x3bXFQWwI1UAi+KmLo=";
+    hash = "sha256-aQmqLpM0vogMsYaDS9OeKVI3N53uY4NBC4FF10hK8Uw=";
   };
 
   nativeBuildInputs = [
-    qmake
+    cmake
     qttools
     wrapQtAppsHook
   ];
@@ -33,15 +34,13 @@ stdenv.mkDerivation (finalAttrs: {
     qtwayland
   ];
 
-  qmakeFlags = [
-    "LRELEASE_EXECUTABLE=${lib.getDev qttools}/bin/lrelease"
-    "PLUGINDIR=${placeholder "out"}/${qtbase.qtPluginPrefix}"
-    "LIBDIR=${placeholder "out"}/lib"
+  cmakeFlags = [
+    (lib.cmakeFeature "PLUGINDIR" "${placeholder "out"}/${qtbase.qtPluginPrefix}")
   ];
 
   meta = {
     description = "Qt6 Configuration Tool";
-    homepage = "https://github.com/ilya-fedin/qt6ct";
+    homepage = "https://www.opencode.net/trialuser/qt6ct";
     platforms = lib.platforms.linux;
     license = lib.licenses.bsd2;
     maintainers = with lib.maintainers; [

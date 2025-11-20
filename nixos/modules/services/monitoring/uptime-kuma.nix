@@ -24,7 +24,7 @@ in
         default = { };
         example = {
           PORT = "4000";
-          NODE_EXTRA_CA_CERTS = "/etc/ssl/certs/ca-certificates.crt";
+          NODE_EXTRA_CA_CERTS = lib.literalExpression "config.security.pki.caBundle";
         };
         description = ''
           Additional configuration for Uptime Kuma, see
@@ -53,6 +53,7 @@ in
       serviceConfig = {
         Type = "simple";
         StateDirectory = "uptime-kuma";
+        StateDirectoryMode = "750";
         DynamicUser = true;
         ExecStart = "${cfg.package}/bin/uptime-kuma-server";
         Restart = "on-failure";
@@ -60,18 +61,20 @@ in
         CapabilityBoundingSet = "";
         LockPersonality = true;
         MemoryDenyWriteExecute = false; # enabling it breaks execution
+        MountAPIVFS = true;
         NoNewPrivileges = true;
         PrivateDevices = true;
         PrivateMounts = true;
         PrivateTmp = true;
+        PrivateUsers = true;
         ProtectClock = true;
-        ProtectControlGroups = true;
+        ProtectControlGroups = "strict";
         ProtectHome = true;
         ProtectHostname = true;
         ProtectKernelLogs = true;
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
-        ProtectProc = "noaccess";
+        ProtectProc = "invisible";
         ProtectSystem = "strict";
         RemoveIPC = true;
         RestrictAddressFamilies = [

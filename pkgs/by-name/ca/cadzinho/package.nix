@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "zecruel";
     repo = "CadZinho";
-    rev = version;
+    tag = version;
     hash = "sha256-AHojy6lYLEyeBaYiIzo6MdQCM3jX5ENNTKgU+PGSD00=";
   };
 
@@ -38,7 +38,7 @@ stdenv.mkDerivation rec {
 
   env.NIX_CFLAGS_COMPILE = toString (
     [
-      "-I${SDL2.dev}/include/SDL2"
+      "-I${lib.getInclude SDL2}/include/SDL2"
       "-I${SDL2_net.dev}/include/SDL2"
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [

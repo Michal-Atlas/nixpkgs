@@ -4,16 +4,17 @@
   fetchFromGitHub,
   lazygit,
   testers,
+  nix-update-script,
 }:
 buildGoModule rec {
   pname = "lazygit";
-  version = "0.47.2";
+  version = "0.56.0";
 
   src = fetchFromGitHub {
     owner = "jesseduffield";
-    repo = pname;
+    repo = "lazygit";
     tag = "v${version}";
-    hash = "sha256-b3mloUFB/ATIkjwkqFzCYdLiDyQXkGnLaZrGc79tkf8=";
+    hash = "sha256-oTj+9zDmbXD4rlFZ++hcd1WSfskSNI7ojI9gN8UcpT8=";
   };
 
   vendorHash = null;
@@ -24,7 +25,16 @@ buildGoModule rec {
     "-X main.buildSource=nix"
   ];
 
-  passthru.tests.version = testers.testVersion { package = lazygit; };
+  passthru = {
+    tests.version = testers.testVersion { package = lazygit; };
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version-regex"
+        "^v([0-9.]+)$"
+      ];
+    };
+  };
 
   meta = {
     description = "Simple terminal UI for git commands";
@@ -35,7 +45,6 @@ buildGoModule rec {
       Br1ght0ne
       equirosa
       khaneliman
-      paveloom
       starsep
       sigmasquadron
     ];

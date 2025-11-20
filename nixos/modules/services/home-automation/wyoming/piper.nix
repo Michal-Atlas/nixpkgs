@@ -10,6 +10,7 @@ let
   cfg = config.services.wyoming.piper;
 
   inherit (lib)
+    literalExpression
     mkOption
     mkEnableOption
     mkPackageOption
@@ -41,8 +42,6 @@ in
             options = {
               enable = mkEnableOption "Wyoming Piper server";
 
-              piper = mkPackageOption pkgs "piper-tts" { };
-
               voice = mkOption {
                 type = str;
                 example = "en-us-ryan-medium";
@@ -70,7 +69,7 @@ in
               };
 
               noiseScale = mkOption {
-                type = numbers.between 0.0 1.0;
+                type = float;
                 default = 0.667;
                 description = ''
                   Generator noise value.
@@ -79,7 +78,7 @@ in
               };
 
               noiseWidth = mkOption {
-                type = numbers.between 0.0 1.0;
+                type = float;
                 default = 0.333;
                 description = ''
                   Phoneme width noise value.
@@ -88,12 +87,25 @@ in
               };
 
               lengthScale = mkOption {
-                type = numbers.between 0.0 1.0;
+                type = float;
                 default = 1.0;
                 description = ''
                   Phoneme length value.
                 '';
                 apply = toString;
+              };
+
+              streaming = mkEnableOption "audio streaming on sentence boundaries" // {
+                default = true;
+              };
+
+              useCUDA = mkOption {
+                type = bool;
+                default = pkgs.config.cudaSupport;
+                defaultText = literalExpression "pkgs.config.cudaSupport";
+                description = ''
+                  Whether to accelerate the underlying onnxruntime library with CUDA.
+                '';
               };
 
               extraArgs = mkOption {
@@ -145,8 +157,6 @@ in
                 "/var/lib/wyoming/piper"
                 "--uri"
                 options.uri
-                "--piper"
-                (lib.getExe options.piper)
                 "--voice"
                 options.voice
                 "--speaker"
@@ -155,8 +165,14 @@ in
                 options.lengthScale
                 "--noise-scale"
                 options.noiseScale
-                "--noise-w"
+                "--noise-w-scale"
                 options.noiseWidth
+              ]
+              ++ lib.optionals options.streaming [
+                "--streaming"
+              ]
+              ++ lib.optionals options.useCUDA [
+                "--use-cuda"
               ]
               ++ options.extraArgs
             );
@@ -164,7 +180,7 @@ in
             DeviceAllow = "";
             DevicePolicy = "closed";
             LockPersonality = true;
-            MemoryDenyWriteExecute = true;
+            MemoryDenyWriteExecute = false; # required for onnxruntime
             PrivateDevices = true;
             PrivateUsers = true;
             ProtectHome = true;
@@ -174,7 +190,7 @@ in
             ProtectKernelTunables = true;
             ProtectControlGroups = true;
             ProtectProc = "invisible";
-            ProcSubset = "pid";
+            ProcSubset = "all"; # for onnxruntime, which queries cpuinfo
             RestrictAddressFamilies = [
               "AF_INET"
               "AF_INET6"

@@ -69,7 +69,7 @@ in
       '';
     };
 
-    phpPackage = mkPackageOption pkgs "php" { };
+    phpPackage = mkPackageOption pkgs "php83" { };
 
     maxUploadSize = mkOption {
       type = types.str;
@@ -102,24 +102,12 @@ in
         phpPackage = cfg.phpPackage.buildEnv {
           extensions =
             { all, enabled }:
-            with all;
-            [
+            enabled
+            ++ (with all; [
               apcu
-              ctype
-              curl
-              dom
-              exif
-              filter
-              gd
-              mbstring
-              opcache
-              openssl
-              session
-              simplexml
               xml
               yaml
-              zip
-            ];
+            ]);
 
           extraConfig = generators.toKeyValue { mkKeyValue = generators.mkKeyValueDefault { } " = "; } {
             output_buffering = "0";
@@ -132,7 +120,7 @@ in
             "opcache.memory_consumption" = "128";
             "opcache.revalidate_freq" = "1";
             "opcache.fast_shutdown" = "1";
-            "openssl.cafile" = "/etc/ssl/certs/ca-certificates.crt";
+            "openssl.cafile" = config.security.pki.caBundle;
             catch_workers_output = "yes";
 
             upload_max_filesize = cfg.maxUploadSize;
@@ -243,7 +231,6 @@ in
           extraConfig = ''
             index index.php index.html /index.php$request_uri;
             add_header X-Content-Type-Options nosniff;
-            add_header X-XSS-Protection "1; mode=block";
             add_header X-Download-Options noopen;
             add_header X-Permitted-Cross-Domain-Policies none;
             add_header X-Frame-Options sameorigin;

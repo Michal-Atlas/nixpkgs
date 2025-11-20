@@ -8,12 +8,10 @@
   cargo,
   rustc,
 
-  # dependencies
-  pyarrow,
-
   # optional-dependencies
   pandas,
   polars,
+  pyarrow,
 
   # tests
   pytest-mock,
@@ -22,19 +20,19 @@
 
 buildPythonPackage rec {
   pname = "fastexcel";
-  version = "0.13.0";
+  version = "0.17.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ToucanToco";
     repo = "fastexcel";
     tag = "v${version}";
-    hash = "sha256-o2+LNpl431/l4YL5/jnviDwZ5D+WjcFRoNV5hLuvRhM=";
+    hash = "sha256-FCI1pMCYN1f5hEg7PxF72uPPIJ5WiQPISF+YFj7+K60=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit pname version src;
-    hash = "sha256-VZoloGsYLAHqeqRkeZi0PZUpN/i+bWlebzL4wDZNHeo=";
+    hash = "sha256-9Xr4woj7TU03AZaebpdlo1U2s0q/ls2fPmSKccpoZq0=";
   };
 
   nativeBuildInputs = [
@@ -44,13 +42,17 @@ buildPythonPackage rec {
     rustc
   ];
 
-  dependencies = [
-    pyarrow
+  maturinBuildFlags = [
+    "--features __maturin"
   ];
 
   optional-dependencies = {
+    pyarrow = [
+      pyarrow
+    ];
     pandas = [
       pandas
+      pyarrow
     ];
     polars = [
       polars
@@ -59,11 +61,17 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [
     "fastexcel"
+    "fastexcel._fastexcel"
   ];
+
+  preCheck = ''
+    rm -rf python/fastexcel
+  '';
 
   nativeCheckInputs = [
     pandas
     polars
+    pyarrow
     pytest-mock
     pytestCheckHook
   ];

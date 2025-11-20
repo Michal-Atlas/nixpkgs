@@ -1,38 +1,48 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, nix-update-script
-, wayland-scanner
-, wrapGAppsHook3
-, pkg-config
-, meson
-, ninja
-, vala
-, gala
-, gtk3
-, libgee
-, granite
-, gettext
-, mutter
-, wayland
-, json-glib
-, elementary-gtk-theme
-, elementary-icon-theme
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  fetchpatch,
+  nix-update-script,
+  wayland-scanner,
+  wrapGAppsHook3,
+  pkg-config,
+  meson,
+  ninja,
+  vala,
+  gala,
+  glib,
+  gtk3,
+  libgee,
+  granite,
+  gettext,
+  mutter,
+  wayland,
+  json-glib,
+  elementary-gtk-theme,
+  elementary-icon-theme,
 }:
 
 stdenv.mkDerivation rec {
   pname = "wingpanel";
-  version = "8.0.2";
+  version = "8.0.3";
 
   src = fetchFromGitHub {
     owner = "elementary";
-    repo = pname;
+    repo = "wingpanel";
     rev = version;
-    sha256 = "sha256-WUl6O3Mtw8Blsxe4Gm7NwRQXFurTNyOv+ZO1Fm1SkVg=";
+    sha256 = "sha256-3UNtqfDqgclRE8Pe9N8rOt6i2FG6lKNfJAv5Q2OYXUU=";
   };
 
   patches = [
     ./indicators.patch
+
+    # Fix build with gala 8.3.0
+    # https://github.com/elementary/wingpanel/pull/642
+    (fetchpatch {
+      url = "https://github.com/elementary/wingpanel/commit/4476df2573797310e254695a66c099b32afe9736.patch";
+      hash = "sha256-99zzXbaeW/ijqPXN7tQexMPWsUW4pX7e0tcxASBVbvI=";
+    })
   ];
 
   depsBuildBuild = [
@@ -53,11 +63,15 @@ stdenv.mkDerivation rec {
     elementary-icon-theme
     gala
     granite
-    gtk3
     json-glib
     libgee
     mutter
     wayland
+  ];
+
+  propagatedBuildInputs = [
+    glib
+    gtk3
   ];
 
   preFixup = ''
@@ -83,7 +97,7 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/elementary/wingpanel";
     license = licenses.gpl3Plus;
     platforms = platforms.linux;
-    maintainers = teams.pantheon.members;
+    teams = [ teams.pantheon ];
     mainProgram = "io.elementary.wingpanel";
   };
 }

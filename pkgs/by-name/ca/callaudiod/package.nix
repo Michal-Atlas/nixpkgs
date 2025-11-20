@@ -17,8 +17,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitLab {
     domain = "gitlab.com";
     owner = "mobian1";
-    repo = pname;
-    rev = version;
+    repo = "callaudiod";
+    tag = version;
     hash = "sha256-gc66XrrFyhF1TvrDECBfGQc+MiDtqZPxdCn0S/43XQU=";
   };
 

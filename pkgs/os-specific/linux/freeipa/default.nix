@@ -39,8 +39,6 @@
 }:
 
 let
-  pathsPy = ./paths.py;
-
   pythonInputs = with python3.pkgs; [
     distutils
     six
@@ -69,11 +67,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "freeipa";
-  version = "4.12.3";
+  version = "4.12.5";
 
   src = fetchurl {
     url = "https://releases.pagure.org/freeipa/freeipa-${version}.tar.gz";
-    sha256 = "sha256-bVttsyn99DX01CmthIxzxuJPGgqZB2+pgamviO4LBJI=";
+    hash = "sha256-jvXS9Hx9VGFccFL19HogfH15JVIW7pc3/TY1pOvJglM=";
   };
 
   patches = [
@@ -124,13 +122,11 @@ stdenv.mkDerivation rec {
     bind
     libpwquality
     jansson
-  ] ++ pythonInputs;
+  ]
+  ++ pythonInputs;
 
   postPatch = ''
     patchShebangs makeapi makeaci install/ui/util
-
-    substituteInPlace ipaplatform/setup.py \
-      --replace 'ipaplatform.debian' 'ipaplatform.nixos'
 
     substituteInPlace ipasetup.py.in \
       --replace 'int(v)' 'int(v.replace("post", ""))'
@@ -138,8 +134,7 @@ stdenv.mkDerivation rec {
     substituteInPlace client/ipa-join.c \
       --replace /usr/sbin/ipa-getkeytab $out/bin/ipa-getkeytab
 
-    cp -r ipaplatform/{fedora,nixos}
-    substitute ${pathsPy} ipaplatform/nixos/paths.py \
+    substituteInPlace ipaplatform/nixos/paths.py \
       --subst-var out \
       --subst-var-by bind ${bind.dnsutils} \
       --subst-var-by curl ${curl} \

@@ -8,13 +8,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "faustPhysicalModeling";
-  version = "2.77.3";
+  version = "2.79.3";
 
   src = fetchFromGitHub {
     owner = "grame-cncm";
     repo = "faust";
     rev = version;
-    sha256 = "sha256-CADiJXyB4FivQjbh1nhpAVgCkTi1pW/vtXKXfL7o7xU=";
+    sha256 = "sha256-j5ADlKZriwLARpEJ/4xgvyAhF5ld9Hl2gXZS3NPJJj8=";
   };
 
   nativeBuildInputs = [
@@ -25,10 +25,6 @@ stdenv.mkDerivation rec {
   buildInputs = [
     bash
   ];
-
-  # ld: /nix/store/*-gcc-14-20241116/lib/gcc/x86_64-unknown-linux-gnu/14.2.1/crtbegin.o:
-  #  relocation R_X86_64_32 against hidden symbol `__TMC_END__' can not be used when making a PIE object
-  hardeningDisable = [ "pie" ];
 
   dontWrapQtApps = true;
 

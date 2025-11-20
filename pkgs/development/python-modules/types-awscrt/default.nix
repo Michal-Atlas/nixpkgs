@@ -2,26 +2,26 @@
   lib,
   buildPythonPackage,
   fetchPypi,
-  pythonOlder,
   setuptools,
 }:
 
 buildPythonPackage rec {
   pname = "types-awscrt";
-  version = "0.23.10";
+  version = "0.28.4";
   pyproject = true;
-
-  disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     pname = "types_awscrt";
     inherit version;
-    hash = "sha256-llZZJgWZtCFWQgS4lUZ2hBBKLAMRu6z9PCQjuLDT8+k=";
+    hash = "sha256-FZKdqEgC8nAZ7o5EhPscEC4fbUzyLrSGiMNKWobQLrY=";
   };
 
   build-system = [ setuptools ];
 
   pythonImportsCheck = [ "awscrt-stubs" ];
+
+  # Module has no tests
+  doCheck = false;
 
   meta = with lib; {
     description = "Type annotations and code completion for awscrt";

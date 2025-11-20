@@ -30,14 +30,14 @@
 
 buildPythonPackage rec {
   pname = "odc-geo";
-  version = "0.4.9";
+  version = "0.4.10";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "opendatacube";
     repo = "odc-geo";
     tag = "v${version}";
-    hash = "sha256-7OhXx+lPvZSHP+aP3ucIkVBvW5De0FLNa+azc3Ar050=";
+    hash = "sha256-f4wUUzcv4NM44zrCvW3sBRybppIBZEAm+oiTSW1B+Fw=";
   };
 
   build-system = [
@@ -79,9 +79,10 @@ buildPythonPackage rec {
     geopandas
     matplotlib
     pytestCheckHook
-  ] ++ optional-dependencies.all;
+  ]
+  ++ optional-dependencies.all;
 
-  pytestFlagsArray = [ "-m 'not network'" ];
+  disabledTestMarks = [ "network" ];
 
   disabledTests = [
     # AttributeError (fixes: https://github.com/opendatacube/odc-geo/pull/202)
@@ -110,7 +111,7 @@ buildPythonPackage rec {
       with geospatial metadata and geo-registered `xarray` rasters.
     '';
     homepage = "https://github.com/opendatacube/odc-geo/";
-    changelog = "https://github.com/opendatacube/odc-geo/tag/v${version}";
+    changelog = "https://github.com/opendatacube/odc-geo/tag/${src.tag}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ daspk04 ];
   };

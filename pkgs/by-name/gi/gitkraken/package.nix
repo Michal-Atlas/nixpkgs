@@ -1,97 +1,98 @@
 {
   lib,
   stdenv,
-  libXcomposite,
-  libgnome-keyring,
-  makeWrapper,
-  udev,
-  curlWithGnuTls,
-  alsa-lib,
-  libXfixes,
-  atk,
-  gtk3,
-  libXrender,
-  pango,
-  adwaita-icon-theme,
-  cairo,
-  freetype,
-  fontconfig,
-  libX11,
-  libXi,
-  libxcb,
-  libXext,
-  libXcursor,
-  glib,
-  libXScrnSaver,
-  libxkbfile,
-  libXtst,
-  nss,
-  nspr,
-  cups,
-  fetchzip,
-  expat,
-  gdk-pixbuf,
-  libXdamage,
-  libXrandr,
-  dbus,
-  makeDesktopItem,
-  openssl,
-  wrapGAppsHook3,
   buildPackages,
+  copyDesktopItems,
+  fetchzip,
+  makeDesktopItem,
+  makeWrapper,
+  adwaita-icon-theme,
+  alsa-lib,
   at-spi2-atk,
   at-spi2-core,
-  libuuid,
+  atk,
+  cacert,
+  cairo,
+  cups,
+  curlWithGnuTls,
+  dbus,
   e2fsprogs,
+  expat,
+  fontconfig,
+  freetype,
+  gdk-pixbuf,
+  git,
+  glib,
+  gtk3,
   krb5,
+  libGL,
+  libX11,
+  libXScrnSaver,
+  libXcomposite,
+  libXcursor,
+  libXdamage,
+  libXext,
+  libXfixes,
+  libXi,
+  libXrandr,
+  libXrender,
+  libXtst,
   libdrm,
   libgbm,
-  unzip,
-  copyDesktopItems,
-  libxshmfence,
+  libgnome-keyring,
+  libuuid,
+  libxcb,
   libxkbcommon,
-  git,
-  libGL,
+  libxkbfile,
+  libxshmfence,
+  nspr,
+  nss,
+  openssl,
+  pango,
+  udev,
+  unzip,
   zlib,
-  cacert,
 }:
 
 let
   pname = "gitkraken";
-  version = "10.7.0";
+  version = "11.5.1";
 
   throwSystem = throw "Unsupported system: ${stdenv.hostPlatform.system}";
 
   srcs = {
     x86_64-linux = fetchzip {
-      url = "https://release.axocdn.com/linux/GitKraken-v${version}.tar.gz";
-      hash = "sha256-fNx3mZnoMkEd1RlvcEmnncX0cLJhRjbf2t4CfB5eRl4=";
+      url = "https://api.gitkraken.dev/releases/production/linux/x64/${version}/gitkraken-amd64.tar.gz";
+      hash = "sha256-ctwkU8AWCuOKFetgCIPp6npk1ZO8ozfELrRp4PR3Xjs=";
     };
 
     x86_64-darwin = fetchzip {
-      url = "https://release.axocdn.com/darwin/GitKraken-v${version}.zip";
-      hash = "sha256-FLNzB1MvW943DDBs5EmxOWx31CMm2KWXrXp6EjfkPeQ=";
+      url = "https://api.gitkraken.dev/releases/production/darwin/x64/${version}/GitKraken-v${version}.zip";
+      hash = "sha256-7wXpMwFGQeLgT7ObrZ5nUd84jzVArAIQ8vgp+fYDgsw=";
     };
 
     aarch64-darwin = fetchzip {
-      url = "https://release.axocdn.com/darwin-arm64/GitKraken-v${version}.zip";
-      hash = "sha256-+uEpm9A9zkTMWL2XccWFTkuhFdZMJUZHSD3FinNsRyA=";
+      url = "https://api.gitkraken.dev/releases/production/darwin/arm64/${version}/GitKraken-v${version}.zip";
+      hash = "sha256-YkY6izRicIapNF9yMCL+YHJoxrWDdVwrcpj8N99tQCs=";
     };
   };
 
   src = srcs.${stdenv.hostPlatform.system} or throwSystem;
 
-  meta = with lib; {
+  meta = {
     homepage = "https://www.gitkraken.com/git-client";
     description = "Simplifying Git for any OS";
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
-    license = licenses.unfree;
+    license = lib.licenses.unfree;
     platforms = builtins.attrNames srcs;
-    maintainers = with maintainers; [
+    maintainers = with lib.maintainers; [
       nicolas-goudry
       Rishik-Y
     ];
     mainProgram = "gitkraken";
   };
+
+  passthru.updateScript = ./update.sh;
 
   linux = stdenv.mkDerivation rec {
     inherit
@@ -99,6 +100,7 @@ let
       version
       src
       meta
+      passthru
       ;
 
     dontBuild = true;
@@ -205,9 +207,9 @@ let
 
       # SSL and permissions fix for bundled nodegit
       pushd $out/share/${pname}/resources/app.asar.unpacked/node_modules/@axosoft/nodegit/build/Release
-      mv nodegit-ubuntu-18.node nodegit-ubuntu-18-ssl-1.1.1.node
-      mv nodegit-ubuntu-18-ssl-static.node nodegit-ubuntu-18.node
-      chmod 755 nodegit-ubuntu-18.node
+      mv nodegit-ubuntu-20.node nodegit-ubuntu-20-ssl-1.1.1.node
+      mv nodegit-ubuntu-20-ssl-static.node nodegit-ubuntu-20.node
+      chmod 755 nodegit-ubuntu-20.node
       popd
 
       # Devendor bundled git
@@ -228,6 +230,7 @@ let
       version
       src
       meta
+      passthru
       ;
 
     nativeBuildInputs = [

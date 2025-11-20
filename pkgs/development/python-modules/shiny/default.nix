@@ -2,11 +2,12 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
-  fetchpatch,
+
+  # build-system
   setuptools,
   setuptools-scm,
 
-  appdirs,
+  # dependencies
   asgiref,
   click,
   htmltools,
@@ -17,50 +18,45 @@
   narwhals,
   orjson,
   packaging,
+  platformdirs,
   prompt-toolkit,
   python-multipart,
   questionary,
+  shinychat,
   starlette,
   typing-extensions,
   uvicorn,
   watchfiles,
   websockets,
 
+  # tests
   anthropic,
   cacert,
   google-generativeai,
   langchain-core,
   ollama,
   openai,
-  pytestCheckHook,
-  pytest-asyncio,
-  pytest-playwright,
-  pytest-xdist,
-  pytest-timeout,
-  pytest-rerunfailures,
   pandas,
   polars,
+  pytest-asyncio,
+  pytest-playwright,
+  pytest-rerunfailures,
+  pytest-timeout,
+  pytest-xdist,
+  pytestCheckHook,
 }:
 
 buildPythonPackage rec {
   pname = "shiny";
-  version = "1.2.1";
+  version = "1.5.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "posit-dev";
     repo = "py-shiny";
     tag = "v${version}";
-    hash = "sha256-8bo2RHuIP7X7EaOlHd+2m4XU287owchAwiqPnpjKFjI=";
+    hash = "sha256-zRKfSY0rE+jzwYUcrRTIFW3OVmavhMDbAQEpry46zCI=";
   };
-
-  patches = [
-    (fetchpatch {
-      name = "fix-narwhals-test.patch";
-      url = "https://github.com/posit-dev/py-shiny/commit/184a9ebd81ff730439513f343576a68f8c1f6eb9.patch";
-      hash = "sha256-DsGnuHQXODzGwpe8ZUHeXGzRFxxduwxCRk82RJaYZg0=";
-    })
-  ];
 
   build-system = [
     setuptools
@@ -68,7 +64,6 @@ buildPythonPackage rec {
   ];
 
   dependencies = [
-    appdirs
     asgiref
     click
     htmltools
@@ -78,10 +73,12 @@ buildPythonPackage rec {
     narwhals
     orjson
     packaging
+    platformdirs
     prompt-toolkit
     python-multipart
     questionary
     setuptools
+    shinychat
     starlette
     typing-extensions
     uvicorn
@@ -104,30 +101,41 @@ buildPythonPackage rec {
     langchain-core
     ollama
     openai
-    pytestCheckHook
-    pytest-asyncio
-    pytest-playwright
-    pytest-xdist
-    pytest-timeout
-    pytest-rerunfailures
     pandas
     polars
-  ] ++ lib.flatten (lib.attrValues optional-dependencies);
+    pytest-asyncio
+    pytest-playwright
+    pytest-rerunfailures
+    pytest-timeout
+    pytest-xdist
+    pytestCheckHook
+  ]
+  ++ lib.flatten (lib.attrValues optional-dependencies);
+
+  pytestFlags = [
+    # ERROR: 'fixture' is not a valid asyncio_default_fixture_loop_scope.
+    # Valid scopes are: function, class, module, package, session.
+    # https://github.com/pytest-dev/pytest-asyncio/issues/924
+    "-o asyncio_mode=auto"
+    "-o asyncio_default_fixture_loop_scope=function"
+  ];
 
   env.SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 
   disabledTests = [
+    # Requires unpackaged brand-yml
+    "test_theme_from_brand_base_case_compiles"
     # ValueError: A tokenizer is required to impose `token_limits` on messages
     "test_chat_message_trimming"
-    # https://github.com/posit-dev/py-shiny/pull/1791
-    "test_as_ollama_message"
   ];
 
+  __darwinAllowLocalNetworking = true;
+
   meta = {
-    changelog = "https://github.com/posit-dev/py-shiny/blob/${src.tag}/CHANGELOG.md";
     description = "Build fast, beautiful web applications in Python";
-    license = lib.licenses.mit;
     homepage = "https://shiny.posit.co/py";
+    changelog = "https://github.com/posit-dev/py-shiny/blob/${src.tag}/CHANGELOG.md";
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ sigmanificient ];
   };
 }

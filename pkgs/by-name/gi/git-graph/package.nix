@@ -11,12 +11,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "mlange-42";
-    repo = pname;
+    repo = "git-graph";
     tag = version;
     hash = "sha256-xYUpLujePO1MS0c25UJX5rRdmPzkaFgF5zJonzQOJqM=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-tN70YyhVkLD5OiYNm64vbY5NtKAG2sFp4Ry6vFpXvtE=";
 
   meta = with lib; {

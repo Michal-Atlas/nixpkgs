@@ -9,6 +9,7 @@
   yarn,
   nixosTests,
   git,
+  nix-update-script,
 }:
 let
   # this rarely changes https://github.com/zabbly/incus/blob/daily/patches/ui-canonical-renames.sed
@@ -19,18 +20,19 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "incus-ui-canonical";
-  version = "0.14.7";
+  version = "0.18.3";
 
   src = fetchFromGitHub {
     owner = "zabbly";
     repo = "incus-ui-canonical";
+    # only use tags prefixed by incus- they are the tested fork versions
     tag = "incus-${version}";
-    hash = "sha256-O8dXTtpeFs2muwXHuNZsXjr15gWYlPmdjW4aQHwDBpY=";
+    hash = "sha256-0wKGPH+ffJ/S8FA46ve5SzyNZJ9C2fv8Psiqu8p6D0s=";
   };
 
   offlineCache = fetchYarnDeps {
     yarnLock = "${src}/yarn.lock";
-    hash = "sha256-dkATFNjAPhrPbXhcJ/R4eIpcagKEwBSnRfLwqTPIe6c=";
+    hash = "sha256-eiK6dyvRbttxC7rESgpYRsYkkrzLZq4RWOiUf7fsAk8=";
   };
 
   patchPhase = ''
@@ -72,13 +74,22 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
-  passthru.tests.default = nixosTests.incus.ui;
+  passthru = {
+    tests.default = nixosTests.incus.ui;
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--version-regex"
+        "incus-([0-9\\.]+)"
+      ];
+    };
+  };
 
   meta = {
     description = "Web user interface for Incus";
     homepage = "https://github.com/zabbly/incus-ui-canonical";
     license = lib.licenses.gpl3;
-    maintainers = lib.teams.lxc.members;
+    teams = [ lib.teams.lxc ];
     platforms = lib.platforms.linux;
   };
 }

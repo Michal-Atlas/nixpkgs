@@ -1,31 +1,47 @@
 {
   lib,
-  buildNpmPackage,
-  fetchurl,
+  stdenvNoCC,
+  makeWrapper,
+  fetchzip,
+  nix-update-script,
+  nodejs,
+
+  testers,
 }:
-
-buildNpmPackage rec {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "copilot-language-server";
-  version = "1.275.0";
+  version = "1.397.0";
 
-  src = fetchurl {
-    url = "https://registry.npmjs.org/@github/copilot-language-server/-/copilot-language-server-${version}.tgz";
-    hash = "sha256-OVqtwz9T5vSYAZc8nof0jXn7H40i1r7SAS6jK4xeSlo=";
+  src = fetchzip {
+    url = "https://github.com/github/copilot-language-server-release/releases/download/${finalAttrs.version}/copilot-language-server-js-${finalAttrs.version}.zip";
+    hash = "sha256-LeQP2Ula7gPqis7DeaQGDAN2wtQT9ryZhIDYUBEPreo=";
+    stripRoot = false;
   };
 
-  npmDepsHash = "sha256-PLX/mN7xu8gMh2BkkyTncP3+rJ3nBmX+pHxl0ONXbe4=";
+  nativeBuildInputs = [
+    makeWrapper
+  ];
 
-  postPatch = ''
-    ln -s ${./package-lock.json} package-lock.json
+  buildInputs = [
+    nodejs
+  ];
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/share/copilot-language-server
+    cp -r ./* $out/share/copilot-language-server/
+
+    makeWrapper ${lib.getExe nodejs} $out/bin/copilot-language-server \
+      --add-flags $out/share/copilot-language-server/main.js
+
+    runHook postInstall
   '';
 
-  postInstall = ''
-    ln -s $out/lib/node_modules/@github/copilot-language-server/dist $out/lib/node_modules/@github/dist
-  '';
-
-  dontNpmBuild = true;
-
-  passthru.updateScript = ./update.sh;
+  passthru = {
+    updateScript = nix-update-script { };
+    tests.version = testers.testVersion { package = finalAttrs.finalPackage; };
+  };
 
   meta = {
     description = "Use GitHub Copilot with any editor or IDE via the Language Server Protocol";
@@ -41,9 +57,13 @@ buildNpmPackage rec {
     mainProgram = "copilot-language-server";
     platforms = [
       "x86_64-linux"
+      "aarch64-linux"
       "x86_64-darwin"
       "aarch64-darwin"
     ];
-    maintainers = with lib.maintainers; [ arunoruto ];
+    maintainers = with lib.maintainers; [
+      arunoruto
+      wattmto
+    ];
   };
-}
+})

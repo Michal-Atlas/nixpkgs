@@ -16,18 +16,19 @@
   xorg,
   udev,
   vulkan-loader,
+  nix-update-script,
   nativeWayland ? false,
 }:
 
 buildDotnetModule rec {
   pname = "osu-lazer";
-  version = "2025.225.0";
+  version = "2025.1029.1";
 
   src = fetchFromGitHub {
     owner = "ppy";
     repo = "osu";
-    tag = version;
-    hash = "sha256-iqIzspQn1W+Qd5lCkuVknog8I2BEBLdO46Pw+j0H1zc=";
+    tag = "${version}-lazer";
+    hash = "sha256-zIeeZVyI//uTZDH3i7FyuKRDDRcVRaT/43/4F5/Lamw=";
   };
 
   projectFile = "osu.Desktop/osu.Desktop.csproj";
@@ -78,7 +79,6 @@ buildDotnetModule rec {
     done
 
     ln -sft $out/lib/${pname} ${SDL2}/lib/libSDL2${stdenvNoCC.hostPlatform.extensions.sharedLibrary}
-    cp -f ${./osu.runtimeconfig.json} "$out/lib/${pname}/osu!.runtimeconfig.json"
 
     runHook postFixup
   '';
@@ -95,7 +95,11 @@ buildDotnetModule rec {
     })
   ];
 
-  passthru.updateScript = ./update.sh;
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version-regex=(.*)-lazer"
+    ];
+  };
 
   meta = {
     description = "Rhythm is just a *click* away (no score submission or multiplayer, see osu-lazer-bin)";

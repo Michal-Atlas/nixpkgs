@@ -1,21 +1,31 @@
-{ lib, stdenv, buildGoModule, fetchFromGitHub }:
+{
+  lib,
+  stdenv,
+  buildGoModule,
+  fetchFromGitHub,
+}:
 
 buildGoModule rec {
   pname = "buildkit";
-  version = "0.20.0";
+  version = "0.25.2";
 
   src = fetchFromGitHub {
     owner = "moby";
     repo = "buildkit";
     rev = "v${version}";
-    hash = "sha256-ApmAeR93szAqeOJR7h5MwtDPf6nrUy4vYKgFeRZlCXw=";
+    hash = "sha256-yW75G96Ca27FB2EzAt77640aDVWYZEFA5NcAnZMPOLg=";
   };
 
   vendorHash = null;
 
   subPackages = [ "cmd/buildctl" ] ++ lib.optionals stdenv.hostPlatform.isLinux [ "cmd/buildkitd" ];
 
-  ldflags = [ "-s" "-w" "-X github.com/moby/buildkit/version.Version=${version}" "-X github.com/moby/buildkit/version.Revision=${src.rev}" ];
+  ldflags = [
+    "-s"
+    "-w"
+    "-X github.com/moby/buildkit/version.Version=${version}"
+    "-X github.com/moby/buildkit/version.Revision=${src.rev}"
+  ];
 
   doCheck = false;
 
@@ -24,7 +34,10 @@ buildGoModule rec {
     homepage = "https://github.com/moby/buildkit";
     changelog = "https://github.com/moby/buildkit/releases/tag/v${version}";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ developer-guy vdemeester ];
+    maintainers = with lib.maintainers; [
+      developer-guy
+      vdemeester
+    ];
     mainProgram = "buildctl";
   };
 }

@@ -5,7 +5,7 @@
   kernel,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "rtl88xxau-aircrack";
   version = "${kernel.version}-unstable-2024-04-09";
 
@@ -48,5 +48,6 @@ stdenv.mkDerivation rec {
       "i686-linux"
       "aarch64-linux"
     ];
+    broken = kernel.kernelAtLeast "6.17";
   };
 }

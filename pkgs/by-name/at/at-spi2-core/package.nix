@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchurl,
+  fetchpatch,
   meson,
   ninja,
   pkg-config,
@@ -12,6 +13,7 @@
     && stdenv.hostPlatform.emulatorAvailable buildPackages,
   gsettings-desktop-schemas,
   makeWrapper,
+  python3,
   dbus,
   glib,
   dconf,
@@ -21,13 +23,13 @@
   libXi,
   libXext,
   gnome,
-  systemd,
-  systemdSupport ? lib.meta.availableOn stdenv.hostPlatform systemd,
+  systemdLibs,
+  systemdSupport ? lib.meta.availableOn stdenv.hostPlatform systemdLibs,
 }:
 
 stdenv.mkDerivation rec {
   pname = "at-spi2-core";
-  version = "2.54.1";
+  version = "2.58.0";
 
   outputs = [
     "out"
@@ -37,35 +39,43 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnome/sources/at-spi2-core/${lib.versions.majorMinor version}/at-spi2-core-${version}.tar.xz";
-    hash = "sha256-8HKeXIdl/rGWm7bB+6GK+iWCEmsDWap1oXP9oaz5PEw=";
+    hash = "sha256-390zANong6IZaf+t4oiYF/t8GQak75JJfrpllps9q1o=";
   };
 
-  nativeBuildInputs =
-    [
-      glib
-      meson
-      ninja
-      pkg-config
-      makeWrapper
-    ]
-    ++ lib.optionals withIntrospection [
-      gobject-introspection
-    ];
+  # TODO apply unconditionally on rebuild
+  patches = lib.optionals stdenv.isDarwin [
+    (fetchpatch {
+      name = "timersub.patch";
+      url = "https://github.com/GNOME/at-spi2-core/commit/02108ea1b96db0189b2d4a9eceb843e1f13b7bdf.diff";
+      hash = "sha256-pVBhawfRnJoXmovl9CAmzh+YWJkbvlOVrCs8XanjP00=";
+    })
+  ];
 
-  buildInputs =
-    [
-      libX11
-      libxml2
-      # at-spi2-core can be build without X support, but due it is a client-side library, GUI-less usage is a very rare case
-      libXtst
-      libXi
-      # libXext is a transitive dependency of libXi
-      libXext
-    ]
-    ++ lib.optionals systemdSupport [
-      # libsystemd is a needed for dbus-broker support
-      systemd
-    ];
+  nativeBuildInputs = [
+    glib
+    meson
+    ninja
+    pkg-config
+    makeWrapper
+    python3
+  ]
+  ++ lib.optionals withIntrospection [
+    gobject-introspection
+  ];
+
+  buildInputs = [
+    libX11
+    libxml2
+    # at-spi2-core can be build without X support, but due it is a client-side library, GUI-less usage is a very rare case
+    libXtst
+    libXi
+    # libXext is a transitive dependency of libXi
+    libXext
+  ]
+  ++ lib.optionals systemdSupport [
+    # libsystemd is a needed for dbus-broker support
+    systemdLibs
+  ];
 
   # In atspi-2.pc dbus-1 glib-2.0
   # In atk.pc gobject-2.0
@@ -77,21 +87,20 @@ stdenv.mkDerivation rec {
   # fails with "AT-SPI: Couldn't connect to accessibility bus. Is at-spi-bus-launcher running?"
   doCheck = false;
 
-  mesonFlags =
-    [
-      # Provide dbus-daemon fallback when it is not already running when
-      # at-spi2-bus-launcher is executed. This allows us to avoid
-      # including the entire dbus closure in libraries linked with
-      # the at-spi2-core libraries.
-      "-Ddbus_daemon=/run/current-system/sw/bin/dbus-daemon"
-    ]
-    ++ lib.optionals systemdSupport [
-      # Same as the above, but for dbus-broker
-      "-Ddbus_broker=/run/current-system/sw/bin/dbus-broker-launch"
-    ]
-    ++ lib.optionals (!systemdSupport) [
-      "-Duse_systemd=false"
-    ];
+  mesonFlags = [
+    # Provide dbus-daemon fallback when it is not already running when
+    # at-spi2-bus-launcher is executed. This allows us to avoid
+    # including the entire dbus closure in libraries linked with
+    # the at-spi2-core libraries.
+    "-Ddbus_daemon=/run/current-system/sw/bin/dbus-daemon"
+  ]
+  ++ lib.optionals systemdSupport [
+    # Same as the above, but for dbus-broker
+    "-Ddbus_broker=/run/current-system/sw/bin/dbus-broker-launch"
+  ]
+  ++ lib.optionals (!systemdSupport) [
+    "-Duse_systemd=false"
+  ];
 
   passthru = {
     updateScript = gnome.updateScript {
@@ -111,7 +120,8 @@ stdenv.mkDerivation rec {
     description = "Assistive Technology Service Provider Interface protocol definitions and daemon for D-Bus";
     homepage = "https://gitlab.gnome.org/GNOME/at-spi2-core";
     license = licenses.lgpl21Plus;
-    maintainers = teams.gnome.members ++ (with maintainers; [ raskin ]);
+    maintainers = with maintainers; [ raskin ];
+    teams = [ teams.gnome ];
     platforms = platforms.unix;
   };
 }

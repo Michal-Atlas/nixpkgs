@@ -18,7 +18,7 @@
 
 buildPythonPackage rec {
   pname = "qdrant-client";
-  version = "1.13.0";
+  version = "1.16.0";
   pyproject = true;
 
   disabled = pythonOlder "3.7";
@@ -27,7 +27,7 @@ buildPythonPackage rec {
     owner = "qdrant";
     repo = "qdrant-client";
     tag = "v${version}";
-    hash = "sha256-0SEIRAcaPLdJhPsjFaSuacj5JSHZVebj1iFrSXKqzto=";
+    hash = "sha256-SJcGq7j++50VJ4627xiZW3sLwv3HP6b6+xZJEGvLxrs=";
   };
 
   build-system = [ poetry-core ];
@@ -44,7 +44,8 @@ buildPythonPackage rec {
     portalocker
     pydantic
     urllib3
-  ] ++ httpx.optional-dependencies.http2;
+  ]
+  ++ httpx.optional-dependencies.http2;
 
   pythonImportsCheck = [ "qdrant_client" ];
 

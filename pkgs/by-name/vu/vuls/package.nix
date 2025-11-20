@@ -1,22 +1,22 @@
 {
   lib,
-  buildGoModule,
+  buildGo124Module,
   fetchFromGitHub,
 }:
 
-buildGoModule rec {
+buildGo124Module rec {
   pname = "vuls";
-  version = "0.29.0";
+  version = "0.36.2";
 
   src = fetchFromGitHub {
     owner = "future-architect";
     repo = "vuls";
     tag = "v${version}";
-    hash = "sha256-aQwQgQPuzsqm05m4Qf4cJBPrKU/TLai88CbDOWs9s58=";
+    hash = "sha256-z6hNC8VDsz5gzzA6VP9PFAJAE7dzrZnxHD/TlBu/uxI=";
     fetchSubmodules = true;
   };
 
-  vendorHash = "sha256-OOU4m3qo6AFAXzCZMQyhdwj9USE9PV4zv4NjDwgZnxE=";
+  vendorHash = "sha256-JO3W8VUQiypQ8AGXTtCIHTNu6PO0kJCPp7LDu+xDqOk=";
 
   ldflags = [
     "-s"

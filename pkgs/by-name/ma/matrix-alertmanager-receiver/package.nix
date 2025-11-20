@@ -2,34 +2,35 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
-  go_1_24,
-  pkg-config,
+  versionCheckHook,
   nix-update-script,
 }:
 
-buildGoModule.override { go = go_1_24; } rec {
+buildGoModule (finalAttrs: {
   pname = "matrix-alertmanager-receiver";
-  version = "2025.2.19";
+  version = "2025.11.12";
 
   src = fetchFromGitHub {
     owner = "metio";
     repo = "matrix-alertmanager-receiver";
-    tag = version;
-    hash = "sha256-mzWxAR82tD5zbviAjRFyBLZSpaETti85kzolWRmhx1o=";
+    tag = finalAttrs.version;
+    hash = "sha256-xoTNn7Sa6OOIwLbpge6zZr6jy/kMsg937yFZu6olfzA=";
   };
 
-  vendorHash = "sha256-lRZGnkcdQtU9ecM6ezm97YtMzC/65yEgzJ99iKWY4QY=";
-
-  nativeBuildInputs = [
-    pkg-config
-  ];
+  vendorHash = "sha256-hweQY/vXUbBxlZrN6ZK0NxoOL66CJyQ64rVII6OVXLk=";
 
   env.CGO_ENABLED = "0";
 
   ldflags = [
     "-s"
-    "-w"
+    "-X main.matrixAlertmanagerReceiverVersion=${finalAttrs.version}"
   ];
+
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+  versionCheckProgramArg = "--version";
+  doInstallCheck = true;
 
   passthru = {
     updateScript = nix-update-script { };
@@ -38,9 +39,9 @@ buildGoModule.override { go = go_1_24; } rec {
   meta = {
     description = "Alertmanager client that forwards alerts to a Matrix room";
     homepage = "https://github.com/metio/matrix-alertmanager-receiver";
-    changelog = "https://github.com/metio/matrix-alertmanager-receiver/releases/tag/${version}";
+    changelog = "https://github.com/metio/matrix-alertmanager-receiver/releases/tag/${finalAttrs.version}";
     license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ liberodark ];
     mainProgram = "matrix-alertmanager-receiver";
   };
-}
+})

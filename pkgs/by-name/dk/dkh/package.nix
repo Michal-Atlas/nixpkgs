@@ -5,17 +5,21 @@
   fetchFromGitHub,
   cmake,
 }:
-
 stdenv.mkDerivation rec {
   pname = "dkh";
   version = "1.2";
 
   src = fetchFromGitHub {
     owner = "psi4";
-    repo = pname;
+    repo = "dkh";
     rev = "v${version}";
     sha256 = "1wb4qmb9f8rnrwnnw1gdhzx1fmhy628bxfrg56khxy3j5ljxkhck";
   };
+
+  postPatch = ''
+    substituteInPlace CMakeLists.txt \
+    --replace-fail "cmake_minimum_required(VERSION 3.0)"  "cmake_minimum_required(VERSION 3.10)"
+  '';
 
   nativeBuildInputs = [
     gfortran

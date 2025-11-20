@@ -10,12 +10,11 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchFromGitHub {
     owner = "xu-cheng";
-    repo = pname;
+    repo = "pandoc-katex";
     rev = version;
     hash = "sha256-2a3WJTNIMqWnTlHB+2U/6ifuoecbOlTP6e7YjD/UvPM=";
   };
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-Ve8s+LLjJiP/I+A/X23CnGiRsbfz5sxFr6kySAgYTyE=";
 
   meta = with lib; {
