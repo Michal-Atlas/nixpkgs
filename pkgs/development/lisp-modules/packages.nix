@@ -280,6 +280,101 @@ let
           inherit (pkgs.stumpwm.meta) description license homepage;
         };
       };
+      
+      qvm = build-with-compile-into-pwd rec {
+        pname = "qvm";
+        version = "1.17.2";
+        src = pkgs.fetchFromGitHub {
+          owner = "quil-lang";
+          repo = "qvm";
+          rev = "v${version}";
+          hash = "sha256-6HpxXK5ewocVvJnPwKuZcjSIdyNwkhqpLDsfzxyedbM=";
+        };
+        systems = [
+          "qvm"
+          "qvm-tests"
+        ];
+        lispLibs = with self; [
+          cffi-grovel
+          alexandria
+          clos-encounters
+          ieee-floats
+          lparallel
+          magicl
+          global-vars
+          cffi
+          static-vectors
+          trivial-garbage
+          mt19937
+          trivial-features
+        ];
+      };
+
+      cl-quil = build-with-compile-into-pwd rec {
+        pname = "cl-quil";
+        version = "1.26.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "quil-lang";
+          repo = "quilc";
+          rev = "v${version}";
+          hash = "sha256-5cNZ+TnYyjX+J6lp3PzQiceTcurDsdI1hIlrU8ikKek=";
+        };
+        systems = [ "cl-quil" ];
+        lispLibs = with self; [
+          alexa
+          yacc
+          cl-grnm
+          cl-ppcre
+          split-sequence
+          singleton-classes
+          optima
+          cl-algebraic-data-type
+          salza2
+          cl-heap
+          cl-permutation
+          command-line-arguments
+          yason
+          magicl
+          bordeaux-threads
+          cl-syslog
+          rpcq
+          drakma
+          trivial-features
+          alexandria
+          swank
+          queues_dot_priority-queue
+        ];
+        nativeLibs = with pkgs; [
+          zeromq
+          blas
+          lapack
+          libffi
+        ];
+      };
+
+      cl-gtk4 = build-asdf-system {
+        pname = "cl-gtk4";
+        version = "1.0.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "bohonghuang";
+          repo = "cl-gtk4";
+          rev = "ff60e3495cdbba5c09d0bb8aa49f3184cc060c8e";
+          hash = "sha256-06cyPf+5z+GE3YvZEJ67kC281nkwRz/hoaykTISsni0=";
+        };
+        lispLibs = with self; [
+          cl-gobject-introspection-wrapper
+          cl-glib
+          cl-gio
+          cl-gobject
+        ];
+        nativeBuildInputs = [
+          pkgs.gobject-introspection
+          pkgs.gtk4
+        ];
+        nativeLibs = [
+          pkgs.gtk4
+        ];
+      };
 
       clfswm = super.clfswm.overrideAttrs (o: {
         buildScript = pkgs.writeText "build-clfswm.lisp" ''
