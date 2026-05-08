@@ -1,0 +1,39 @@
+diff --git a/src/internals.lisp b/src/internals.lisp
+index 44e1ce1..b4d4b5a 100644
+--- a/src/internals.lisp
++++ b/src/internals.lisp
+@@ -71,7 +71,7 @@
+      (merge-pathnames*
+       (make-pathname*
+        :directory '(:relative "BikeInterop" "bin" "netstandard2.0"))
+-      (pathname-directory-pathname #.(current-lisp-file-pathname))))))
++      (pathname-directory-pathname #.(uiop:getenv "NIX_BUILD_TOP"))))))
+ 
+ ;; Clear interop assembly on rebuild
+ (eval-when (:compile-toplevel :execute)
+@@ -160,7 +160,6 @@
+                 -interop-build-dir-)))
+          (proj "BikeInterop.csproj"))
+     (with-current-directory (dir)
+-      (unwind-protect
+            (run-program (remove
+                          nil
+                          (list "dotnet" "build" "-c" "Release"
+@@ -168,16 +167,7 @@
+                                  "--no-incremental")
+                                (when enable-task-hack
+                                  "/p:DefineConstants=ENABLE_TASK_HACK")
+-                               proj))
+-                        :output (pathname "build.log")
+-                        :error-output (pathname "build.log"))
+-        (ignore-errors
+-         (with-open-file (stream "build.log" :element-type '(unsigned-byte 8)
+-                                             :if-does-not-exist :create)
+-           (with-open-stream (in (%get-flexi-stream stream))
+-             (fresh-line *error-output*)
+-             (loop :for line = (read-line in nil)
+-                   :while line :do (write-line line *error-output*)))))))))
++                               proj))))))
+ 
+ 
+ (defun %find-interop ()

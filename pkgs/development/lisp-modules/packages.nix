@@ -105,6 +105,11 @@ let
         systems = o.systems ++ [ "cape" ];
       });
 
+      bike = super.bike.overrideAttrs (o: {
+        nativeBuildInputs = [ pkgs.dotnet-sdk ];
+        patches = [ ./patches/bike-no-log-file.patch ];
+      });
+
       cl-notify = build-asdf-system {
         pname = "cl-notify";
         version = "20080904-138ca7038";
